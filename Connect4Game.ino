@@ -19,18 +19,6 @@ void setup() {
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
-
-  display[0][0] = GREEN;
-  display[1][0] = RED;
-  display[2][0] = GREEN;
-  display[4][3] = RED;
-  display[5][3] = GREEN;
-  display[6][5] = ORANGE;
-
-  for(int x=0;x<8;x++)
-    for(int y=0;y<8;y++){
-      display[x][y] = ((x+y)%2==0)?RED:GREEN;
-   }
 }
 
 void drawDisplay() {
@@ -72,6 +60,13 @@ void syncDisplay() {
 }
 
 void loop() {
+
+  int d = (millis()/500)%2;
+  for(int x=0;x<8;x++)
+    for(int y=0;y<8;y++){
+      display[x][y] = ((x+y)%2==d)?RED:GREEN;
+   }
+  
   //call often
   drawDisplay();
   //sync before display changes to prevent tearing
