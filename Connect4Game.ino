@@ -10,11 +10,22 @@ int drawColumn;
 
 int display[8][8];
 
+int GREEN = 1;
+int RED = 2;
+int ORANGE = GREEN | RED;
+
 void setup() {
   //set pins to output so you can control the shift register
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
+
+  display[0][0] = GREEN;
+  display[1][0] = RED;
+  display[2][0] = GREEN;
+  display[4][3] = RED;
+  display[5][3] = GREEN;
+  display[6][5] = ORANGE;
 }
 
 void drawDisplay() {
@@ -22,17 +33,27 @@ void drawDisplay() {
   // take the latchPin low so 
   // the LEDs don't change while you're sending in bits:
   digitalWrite(latchPin, LOW);
-  delay(50);
+  //delay(50);
   // shift out the bits:    
   
-  int green = 1<<col;
-  int red = 1<<col;
-    
+  int green = 0;
+  int red = 0;
+
+  for(int y=0;y<8;y++){
+     int cell = display[col][y];
+     if(cell&GREEN){
+       green+=1<<y;
+     }
+     if(cell&RED){
+       red+=1<<y;
+     }
+  }
+  
   //green
   shiftOut(dataPin, clockPin, MSBFIRST, ~green);
     
   //red
-  shiftOut(dataPin, clockPin, MSBFIRST, ~red);
+  shiftOut(dataPin, clockPin, LSBFIRST, ~red);
     
   //column
   shiftOut(dataPin, clockPin, MSBFIRST, 1<<col);
@@ -51,7 +72,9 @@ void syncDisplay() {
 }
 
 void loop() {
+  //call often
   drawDisplay();
+  //sync before display changes to prevent tearing
   syncDisplay();
 }
 
