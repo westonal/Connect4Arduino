@@ -29,18 +29,12 @@ void setup() {
 }
 
 void drawDisplay() {
-  int col = drawColumn;
-  // take the latchPin low so 
-  // the LEDs don't change while you're sending in bits:
-  digitalWrite(latchPin, LOW);
-  //delay(50);
-  // shift out the bits:    
-  
+  int x = drawColumn;  
   int green = 0;
   int red = 0;
 
-  for(int y=0;y<8;y++){
-     int cell = display[col][y];
+  for(int y=0; y<8; y++) {
+     int cell = display[x][y];
      if(cell&GREEN){
        green+=1<<y;
      }
@@ -56,9 +50,10 @@ void drawDisplay() {
   shiftOut(dataPin, clockPin, LSBFIRST, ~red);
     
   //column
-  shiftOut(dataPin, clockPin, MSBFIRST, 1<<col);
+  shiftOut(dataPin, clockPin, MSBFIRST, 1<<x);
     //take the latch pin high so the LEDs will light up:
   digitalWrite(latchPin, HIGH);
+  digitalWrite(latchPin, LOW);
   delayMicroseconds(100);
   digitalWrite(13, toggle==0?HIGH:LOW);
   toggle=(toggle+1)%2;
