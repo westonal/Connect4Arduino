@@ -5,6 +5,12 @@ int clockPin = 4;
 ////Pin connected to DS of 74HC595
 int dataPin = 7;
 
+int input_left = 11;
+int input_centre = 10;
+int input_right = 12;
+
+int inputs[] = {input_left, input_centre, input_right};
+
 int toggle;
 int drawColumn;
 
@@ -19,6 +25,9 @@ void setup() {
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
+
+  for(int i=0;i<3;i++)
+    pinMode(inputs[i], INPUT_PULLUP);
 }
 
 void drawDisplay() {
@@ -66,6 +75,12 @@ void loop() {
     for(int y=0;y<8;y++){
       display[x][y] = ((x+y)%2==d)?RED:GREEN;
    }
+
+  for (int i=0;i<3;i++){
+    if (digitalRead(inputs[i])==LOW) {
+      display[i][0] = ORANGE;
+    }
+  }
   
   //call often
   drawDisplay();
