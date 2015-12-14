@@ -1,6 +1,7 @@
 extern "C" {
   #include "display.h"
   #include "pins.h"
+  #include "clock.h"
 }
 
 int inputs[] = {input_left, input_centre, input_right};
@@ -57,6 +58,11 @@ void loop() {
     display[x][0] = OFF;
 
   display[moveLocation][0] = ORANGE;
+
+  drawDigit(0,0,1,GREEN,OFF);
+  drawDigit(2,0,2,RED,OFF);
+  drawDigit(4,0,3,GREEN,OFF);
+  drawDigit(6,0,4,RED,OFF);
   
   //call often
   drawDisplay();
