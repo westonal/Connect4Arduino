@@ -36,6 +36,18 @@ void digitalClockDisplay(){
   drawDigit(2,0,hr%10,RED,OFF);
   drawDigit(4,0,min/10,GREEN,OFF);
   drawDigit(6,0,min%10,RED,OFF);
+
+  int sec = second();
+  int s1 = sec/5;
+  int s2 = (sec-30)/5;
+  if (s1>6) s1=6;
+  for(int s=1;s<=s1;s++){
+    display[s][6] = GREEN;
+  }
+  for(int s=1;s<=s2;s++){
+    display[s][6] |= RED;
+  }
+  
 }
 
 void loop() {
@@ -52,8 +64,10 @@ void loop() {
     if ((mode & DOWN_LEFT)==0) {
       moveLocation = (moveLocation + 7)%8;
       setTime((hour()+1%24),minute(),second(),day(),month(),year());
+      digitalClockDisplay();
+      drawDelay(250);
     }
-    mode |= DOWN_LEFT;
+    //mode |= DOWN_LEFT;
   } else {
     mode = mode & ~DOWN_LEFT;
   }
@@ -62,15 +76,17 @@ void loop() {
      if ((mode & DOWN_RIGHT)==0) {
        moveLocation = (moveLocation + 1)%8;
        setTime(hour(),(minute()+1)%60,second(),day(),month(),year());
+       digitalClockDisplay();
+       drawDelay(250);
      }
-     mode |= DOWN_RIGHT;
+    // mode |= DOWN_RIGHT;
   } else {
     mode = mode & ~DOWN_RIGHT;
   }
 
   if (digitalRead(input_centre)==LOW) {
     moveLocation = 3;
-    setTime(hour(),minute(),59,day(),month(),year());
+    setTime(hour(),minute(),0,day(),month(),year());    
   }
 
   for(int x=0;x<8;x++)
