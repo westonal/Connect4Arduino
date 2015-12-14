@@ -50,3 +50,10 @@ void clearDisplay(int colour){
   display[x][y]=colour;
 }
 
+void drawDelay(int milliseconds){
+  long end = millis()+milliseconds;
+  while(millis()<end){
+    drawDisplay();
+  }
+}
+

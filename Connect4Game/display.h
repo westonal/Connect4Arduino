@@ -13,3 +13,4 @@ void drawDisplay();
 void syncDisplay();
 
 void clearDisplay(int colour);
+void drawDelay(int milliseconds);
