@@ -16,6 +16,7 @@ int drawColumn;
 
 int display[8][8];
 
+int OFF = 0;
 int GREEN = 1;
 int RED = 2;
 int ORANGE = GREEN | RED;
@@ -68,19 +69,48 @@ void syncDisplay() {
   }
 }
 
+int moveLocation;
+
+int DOWN_LEFT = 1;
+int DOWN_RIGHT = 2;
+int DOWN_CENTRE = 4;
+
+int mode;
+
 void loop() {
 
   int d = (millis()/500)%2;
   for(int x=0;x<8;x++)
-    for(int y=0;y<8;y++){
+    for(int y=1;y<8;y++){
       display[x][y] = ((x+y)%2==d)?RED:GREEN;
    }
-
-  for (int i=0;i<3;i++){
-    if (digitalRead(inputs[i])==LOW) {
-      display[i][0] = ORANGE;
+  
+  if (digitalRead(input_left)==LOW) {
+    if ((mode & DOWN_LEFT)==0) {
+      moveLocation = (moveLocation + 7)%8;
     }
+    mode |= DOWN_LEFT;
+  } else {
+    mode = mode & ~DOWN_LEFT;
   }
+  
+  if (digitalRead(input_right)==LOW) {
+     if ((mode & DOWN_RIGHT)==0) {
+       moveLocation = (moveLocation + 1)%8;
+     }
+     mode |= DOWN_RIGHT;
+  } else {
+    mode = mode & ~DOWN_RIGHT;
+  }
+
+  if (digitalRead(input_centre)==LOW) {
+    moveLocation = 3;
+  }
+
+  for(int x=0;x<8;x++)
+    display[x][0] = OFF;
+
+  display[moveLocation][0] = ORANGE;
   
   //call often
   drawDisplay();
