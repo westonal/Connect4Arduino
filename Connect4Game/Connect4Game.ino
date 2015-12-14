@@ -39,6 +39,12 @@ void digitalClockDisplay(){
   drawDigit(4,0,min/10,sx==1?ORANGE:RED,OFF);
   drawDigit(6,0,min%10,sx==0?ORANGE:GREEN,OFF);
 
+  if(sec==0){
+    for(int x=0;x<8;x++)
+    for(int y=5;y<8;y++)
+    display[x][y]=GREEN;
+  }
+
   sec += 5;
   int s1 = sec/5;
   int s2 = (sec-30)/5;
@@ -48,8 +54,7 @@ void digitalClockDisplay(){
   }
   for(int s=1;s<=s2;s++){
     display[s][6] |= RED;
-  }
-  
+  }  
 }
 
 void loop() {
