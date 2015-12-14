@@ -1,3 +1,5 @@
+#include <TimeLib.h>
+
 extern "C" {
   #include "display.h"
   #include "pins.h"
@@ -14,6 +16,8 @@ void setup() {
 
   for(int i=0;i<3;i++)
     pinMode(inputs[i], INPUT_PULLUP);
+
+  setTime(1,2,0,1,1,2015);
 }
 
 int moveLocation;
@@ -24,17 +28,30 @@ int DOWN_CENTRE = 4;
 
 int mode;
 
+void digitalClockDisplay(){
+  int hr = hour();
+  int min = minute();
+
+  drawDigit(0,0,hr/10,GREEN,OFF);
+  drawDigit(2,0,hr%10,RED,OFF);
+  drawDigit(4,0,min/10,GREEN,OFF);
+  drawDigit(6,0,min%10,RED,OFF);
+}
+
 void loop() {
 
-  int d = (millis()/500)%2;
-  for(int x=0;x<8;x++)
-    for(int y=1;y<8;y++){
-      display[x][y] = ((x+y)%2==d)?RED:GREEN;
-   }
+//  int d = (millis()/500)%2;
+//  for(int x=0;x<8;x++)
+//    for(int y=1;y<8;y++){
+//      display[x][y] = ((x+y)%2==d)?RED:GREEN;
+//   }
+
+  clearDisplay(OFF);
   
   if (digitalRead(input_left)==LOW) {
     if ((mode & DOWN_LEFT)==0) {
       moveLocation = (moveLocation + 7)%8;
+      setTime((hour()+1%24),minute(),second(),day(),month(),year());
     }
     mode |= DOWN_LEFT;
   } else {
@@ -44,6 +61,7 @@ void loop() {
   if (digitalRead(input_right)==LOW) {
      if ((mode & DOWN_RIGHT)==0) {
        moveLocation = (moveLocation + 1)%8;
+       setTime(hour(),(minute()+1)%60,second(),day(),month(),year());
      }
      mode |= DOWN_RIGHT;
   } else {
@@ -52,6 +70,7 @@ void loop() {
 
   if (digitalRead(input_centre)==LOW) {
     moveLocation = 3;
+    setTime(hour(),minute(),59,day(),month(),year());
   }
 
   for(int x=0;x<8;x++)
@@ -59,10 +78,7 @@ void loop() {
 
   display[moveLocation][0] = ORANGE;
 
-  drawDigit(0,0,1,GREEN,OFF);
-  drawDigit(2,0,2,RED,OFF);
-  drawDigit(4,0,3,GREEN,OFF);
-  drawDigit(6,0,4,RED,OFF);
+  digitalClockDisplay();
   
   //call often
   drawDisplay();
