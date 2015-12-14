@@ -44,3 +44,9 @@ void syncDisplay() {
   }
 }
 
+void clearDisplay(int colour){
+  for(int y=0;y<8;y++)
+  for(int x=0;x<8;x++)
+  display[x][y]=colour;
+}
+

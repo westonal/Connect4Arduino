@@ -12,4 +12,4 @@ extern int display[8][8];
 void drawDisplay();
 void syncDisplay();
 
-
+void clearDisplay(int colour);
