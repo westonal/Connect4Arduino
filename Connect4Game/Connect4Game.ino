@@ -31,13 +31,15 @@ int mode;
 void digitalClockDisplay(){
   int hr = hour();
   int min = minute();
-
-  drawDigit(0,0,hr/10,GREEN,OFF);
-  drawDigit(2,0,hr%10,RED,OFF);
-  drawDigit(4,0,min/10,GREEN,OFF);
-  drawDigit(6,0,min%10,RED,OFF);
-
   int sec = second();
+  int sx=sec%5;
+
+  drawDigit(0,0,hr/10,sx==3?ORANGE:RED,OFF);
+  drawDigit(2,0,hr%10,sx==2?ORANGE:GREEN,OFF);
+  drawDigit(4,0,min/10,sx==1?ORANGE:RED,OFF);
+  drawDigit(6,0,min%10,sx==0?ORANGE:GREEN,OFF);
+
+  sec += 5;
   int s1 = sec/5;
   int s2 = (sec-30)/5;
   if (s1>6) s1=6;
