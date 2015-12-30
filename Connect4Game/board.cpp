@@ -1,9 +1,10 @@
+#include "Arduino.h"
 
 #define CONNECT4_WIDTH (8)
 #define CONNECT4_HEIGHT (7)
 
 class Board {
-    int _pos[CONNECT4_WIDTH][CONNECT4_HEIGHT];
+    uint64_t  _pos;
   public:
     Board();
     int width();
@@ -13,13 +14,13 @@ class Board {
 };
 
 Board::Board () {
-  for(int y=0; y<CONNECT4_HEIGHT; y++)
-  for(int x=0; x<CONNECT4_WIDTH; x++)
-    _pos[x][y] = 0;
+  _pos = 0;
 }
 
+#define BITMASK(x,y) (1LL<<((y)*CONNECT4_WIDTH+(x)))
+
 int Board::pos(int x, int y) {
-  return _pos[x][y];  
+  return (_pos & BITMASK(x,y))!=0;
 }
 
 int Board::width() {
@@ -31,6 +32,6 @@ int Board::height() {
 }
 
 void Board::mark(int x, int y) {
-  _pos[x][y] = 1;
+  _pos |= BITMASK(x,y);
 }
 
