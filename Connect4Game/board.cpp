@@ -9,6 +9,7 @@ class Board {
     int width();
     int height();
     int pos(int,int);
+    void mark(int,int);
 };
 
 Board::Board () {
@@ -17,15 +18,19 @@ Board::Board () {
     _pos[x][y] = 0;
 }
 
-int Board::pos(int x, int y){
+int Board::pos(int x, int y) {
   return _pos[x][y];  
 }
 
-int Board::width(){
+int Board::width() {
   return CONNECT4_WIDTH;  
 }
 
-int Board::height(){
+int Board::height() {
   return CONNECT4_HEIGHT;  
+}
+
+void Board::mark(int x, int y) {
+  _pos[x][y] = 1;
 }
 

@@ -8,6 +8,7 @@ class Board {
     int width();
     int height();
     int pos(int,int);
+    void mark(int,int);
 };
 
 #endif
