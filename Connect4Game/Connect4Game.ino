@@ -9,6 +9,9 @@ extern "C" {
 int inputs[] = {input_left, input_centre, input_right};
 
 void setup() {
+  Serial.begin(9600);
+  while(!Serial); // for the Arduino Leonardo/Micro only
+   
   //set pins to output so you can control the shift register
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
@@ -58,7 +61,7 @@ void digitalClockDisplay(){
 }
 
 void loop() {
-
+  tests();
 //  int d = (millis()/500)%2;
 //  for(int x=0;x<8;x++)
 //    for(int y=1;y<8;y++){
