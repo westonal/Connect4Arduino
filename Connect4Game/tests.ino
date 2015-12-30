@@ -1,6 +1,6 @@
 #include <ArduinoUnit.h>
 
-test(ok1) 
+test(ok)
 {
   int x=3;
   int y=3;
