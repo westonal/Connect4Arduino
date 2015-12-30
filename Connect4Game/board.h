@@ -9,6 +9,7 @@ class Board {
     int height();
     int pos(int,int);
     void mark(int,int);
+    Board createCombined(const Board*);
 };
 
 #endif

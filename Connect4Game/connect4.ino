@@ -53,4 +53,29 @@ test(can_mark_each_and_read_back)
   delete(b);
 }
 
+test(can_combine_two_boards)
+{
+  Board *b1 = new Board;
+  Board *b2 = new Board;
+  b1->mark(3, 4);
+  b2->mark(4, 5);
+  Board bc = b1->createCombined(b2);
+  assertEqual(0, bc.pos(2, 4));
+  assertEqual(1, bc.pos(3, 4));
+  assertEqual(1, bc.pos(4, 5));
+  assertEqual(0, bc.pos(3, 5));
+  delete(b1);
+  delete(b2);
+}
+
+test(sixty_four_bit_operations)
+{
+  uint64_t a = 2LL;
+  uint64_t b = 4LL;
+  assertEqual(6, (int)(a|b));
+  uint64_t a2 = 1LL<<62;
+  uint64_t b2 = a2>>62;
+  assertEqual(1, (int)(b2));
+}
+
 
