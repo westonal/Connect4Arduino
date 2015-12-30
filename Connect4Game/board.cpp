@@ -4,7 +4,9 @@
 #define CONNECT4_HEIGHT (7)
 
 class Board {
+    int space;
     uint64_t _pos;
+    int space2;
   public:
     Board();
     int width();
@@ -15,7 +17,7 @@ class Board {
 };
 
 Board::Board () {
-  _pos = 0;
+  _pos = 0LL;
 }
 
 #define BITMASK(x,y) (1LL<<((y)*CONNECT4_WIDTH+(x)))
@@ -39,12 +41,11 @@ void print64(uint64_t i64){
 }
 
 void Board::mark(int x, int y) {
-  _pos |= BITMASK(x,y);
+  uint64_t toSet = BITMASK(x,y);
+  _pos = _pos | toSet;
 }
 
-Board Board::createCombined(const Board* other) {  
-  print64(_pos);
-  print64(other->_pos);
+Board Board::createCombined(const Board* other) {
   Board combined;
   print64(_pos);
   print64(other->_pos);
