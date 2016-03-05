@@ -1,4 +1,5 @@
 #include <TimeLib.h>
+#include "connect4game.h"
 
 extern "C" {
   #include "display.h"
@@ -7,6 +8,8 @@ extern "C" {
 }
 
 int inputs[] = {input_left, input_centre, input_right};
+
+Connect4Game *theGame;
 
 void setup() {
   Serial.begin(9600);
@@ -21,6 +24,8 @@ void setup() {
     pinMode(inputs[i], INPUT_PULLUP);
 
   setTime(1,2,0,1,1,2015);
+  
+  theGame = new Connect4Game;
 }
 
 int moveLocation;
@@ -60,14 +65,7 @@ void digitalClockDisplay(){
   }  
 }
 
-void loop() {
-  tests();
-//  int d = (millis()/500)%2;
-//  for(int x=0;x<8;x++)
-//    for(int y=1;y<8;y++){
-//      display[x][y] = ((x+y)%2==d)?RED:GREEN;
-//   }
-
+void digitalClockLoop() {  
   clearDisplay(OFF);
   
   if (digitalRead(input_left)==LOW) {
@@ -105,6 +103,15 @@ void loop() {
   display[moveLocation][0] = ORANGE;
 
   digitalClockDisplay();
+}
+
+void loop() {
+  //tests();
+  clearDisplay(OFF);
+  
+  //digitalClockLoop();
+  
+  theGame->loop();
   
   //call often
   drawDisplay();

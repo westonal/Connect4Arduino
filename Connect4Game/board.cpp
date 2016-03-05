@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include "display.h"
 
 #define CONNECT4_WIDTH (8)
 #define CONNECT4_HEIGHT (7)
@@ -13,9 +14,11 @@ class Board {
     int pos(int,int);
     void mark(int,int);
     Board* createCombined(const Board* other);
+    void draw(int colour);
 };
 
 Board::Board () {
+  Serial.println("Created new board");
   _pos1 = 0L;
   _pos2 = 0L;
 } 
@@ -58,5 +61,11 @@ Board* Board::createCombined(const Board* other) {
   combined->_pos1 = _pos1 | other->_pos1;
   combined->_pos2 = _pos2 | other->_pos2;
   return combined;
+}
+
+void Board::draw(int colour){
+   for(int y=0;y<CONNECT4_HEIGHT;y++)
+   for(int x=0;x<CONNECT4_WIDTH;x++)
+     if(pos(x,y)) display[x][y+1] = colour;
 }
 
