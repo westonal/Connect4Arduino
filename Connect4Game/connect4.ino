@@ -55,15 +55,40 @@ test(can_mark_each_and_read_back)
 
 test(can_combine_two_boards)
 {
-  Board b1;
-  Board b2;
-  b1.mark(3, 4);
-  b2.mark(4, 5);
-  Board bc = b1.createCombined(b2);
-  assertEqual(0, bc.pos(2, 4));
-  assertEqual(1, bc.pos(3, 4));
-  assertEqual(1, bc.pos(4, 5));
-  assertEqual(0, bc.pos(3, 5));
+  Board *b1 = new Board;
+  Board *b2 = new Board;
+  b1->mark(3, 4);
+  b2->mark(4, 5);
+
+  assertEqual(0, b1->pos(2, 4));
+  assertEqual(1, b1->pos(3, 4));
+  assertEqual(0, b1->pos(4, 5));
+  assertEqual(0, b1->pos(3, 5));
+  
+  assertEqual(0, b2->pos(2, 4));
+  assertEqual(0, b2->pos(3, 4));
+  assertEqual(1, b2->pos(4, 5));
+  assertEqual(0, b2->pos(3, 5));
+  
+  Board* bc = b1->createCombined(b2);
+  assertEqual(0, b1->pos(2, 4));
+  assertEqual(1, b1->pos(3, 4));
+  assertEqual(0, b1->pos(4, 5));
+  assertEqual(0, b1->pos(3, 5));
+  
+  assertEqual(0, b2->pos(2, 4));
+  assertEqual(0, b2->pos(3, 4));
+  assertEqual(1, b2->pos(4, 5));
+  assertEqual(0, b2->pos(3, 5));
+
+  assertEqual(0, bc->pos(2, 4));
+  assertEqual(1, bc->pos(3, 4));
+  assertEqual(1, bc->pos(4, 5));
+  assertEqual(0, bc->pos(3, 5));
+  
+  delete(b1);
+  delete(b2);
+  delete(bc);
 }
 
 test(sixty_four_bit_operations)

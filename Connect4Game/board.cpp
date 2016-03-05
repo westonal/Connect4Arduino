@@ -4,24 +4,31 @@
 #define CONNECT4_HEIGHT (7)
 
 class Board {
-    unsigned long long _pos;
+    unsigned long _pos1;
+    unsigned long _pos2;
   public:
     Board();
     int width();
     int height();
     int pos(int,int);
     void mark(int,int);
-    Board createCombined(const Board other);
+    Board* createCombined(const Board* other);
 };
 
 Board::Board () {
-  _pos = 0LL;
-}
+  _pos1 = 0L;
+  _pos2 = 0L;
+} 
 
-#define BITMASK(x,y) (1LL<<((y)*CONNECT4_WIDTH+(x)))
+#define IDX(x,y) ((y)*CONNECT4_WIDTH+(x))
+#define BITMASK(x,y) (1LL<<IDX(x,y))
 
 int Board::pos(int x, int y) {
-  return (_pos & BITMASK(x,y))!=0LL;
+  int idx = IDX(x,y);
+  if(idx>=32){
+    return ((_pos1>>(idx-32))&1) != 0LL;
+  }  
+  return ((_pos2>>idx)&1) != 0LL;
 }
 
 int Board::width() {
@@ -32,23 +39,24 @@ int Board::height() {
   return CONNECT4_HEIGHT;  
 }
 
-void print64(unsigned long long i64){
+void print64(uint64_t i64){
   Serial.print((unsigned long)(i64>>32), BIN);
   Serial.print(" ");
   Serial.println((unsigned long)(i64), BIN);
 }
 
 void Board::mark(int x, int y) {
-  uint64_t toSet = BITMASK(x,y);
-  _pos = _pos | toSet;
+  int idx = IDX(x,y);
+  if(idx>=32){
+    _pos1 = _pos1 | (1 << (idx-32));
+  }  
+  _pos2 = _pos2 | (1 << idx);
 }
 
-Board Board::createCombined(const Board other) {
-  Board combined;
-  print64(_pos);
-  print64(other._pos);
-  combined._pos = (unsigned long long)_pos | (unsigned long long)(other._pos);
-  print64(combined._pos);
+Board* Board::createCombined(const Board* other) {
+  Board* combined = new Board;
+  combined->_pos1 = _pos1 | other->_pos1;
+  combined->_pos2 = _pos2 | other->_pos2;
   return combined;
 }
 
