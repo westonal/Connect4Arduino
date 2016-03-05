@@ -47,6 +47,7 @@ test(can_mark_each_and_read_back)
   for(int y=0; y < b->height(); y++)
   for(int x=0; x < b->width(); x++)  
   {
+    assertEqual(0, b->pos(x, y));
     b->mark(x, y);
     assertEqual(1, b->pos(x, y));
   }

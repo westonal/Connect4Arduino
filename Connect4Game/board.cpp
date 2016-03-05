@@ -11,8 +11,8 @@ class Board {
     Board();
     int width();
     int height();
-    int pos(int,int);
-    void mark(int,int);
+    int pos(int, int);
+    void mark(int, int);
     Board* createCombined(const Board* other);
     void draw(int colour);
 };
@@ -21,39 +21,39 @@ Board::Board () {
   Serial.println("Created new board");
   _pos1 = 0L;
   _pos2 = 0L;
-} 
+}
 
 #define IDX(x,y) ((y)*CONNECT4_WIDTH+(x))
-#define BITMASK(x,y) (1LL<<IDX(x,y))
 
 int Board::pos(int x, int y) {
-  int idx = IDX(x,y);
-  if(idx>=32){
-    return ((_pos1>>(idx-32))&1) != 0LL;
-  }  
-  return ((_pos2>>idx)&1) != 0LL;
+  int idx = IDX(x, y);
+  if (idx < 32) {
+    return ((_pos1 >> idx) & 1) == 1;
+  }
+  return ((_pos2 >> (idx - 32)) & 1) == 1;
 }
 
 int Board::width() {
-  return CONNECT4_WIDTH;  
+  return CONNECT4_WIDTH;
 }
 
 int Board::height() {
-  return CONNECT4_HEIGHT;  
+  return CONNECT4_HEIGHT;
 }
 
-void print64(uint64_t i64){
-  Serial.print((unsigned long)(i64>>32), BIN);
+void print64(uint64_t i64) {
+  Serial.print((unsigned long)(i64 >> 32), BIN);
   Serial.print(" ");
   Serial.println((unsigned long)(i64), BIN);
 }
 
 void Board::mark(int x, int y) {
-  int idx = IDX(x,y);
-  if(idx>=32){
-    _pos1 = _pos1 | (1 << (idx-32));
-  }  
-  _pos2 = _pos2 | (1 << idx);
+  int idx = IDX(x, y);
+  if (idx < 32) {
+    _pos1 = _pos1 | (1LL << idx);
+  } else {
+    _pos2 = _pos2 | (1LL << (idx - 32));
+  }
 }
 
 Board* Board::createCombined(const Board* other) {
@@ -63,9 +63,9 @@ Board* Board::createCombined(const Board* other) {
   return combined;
 }
 
-void Board::draw(int colour){
-   for(int y=0;y<CONNECT4_HEIGHT;y++)
-   for(int x=0;x<CONNECT4_WIDTH;x++)
-     if(pos(x,y)) display[x][y+1] = colour;
+void Board::draw(int colour) {
+  for (int y = 0; y < CONNECT4_HEIGHT; y++)
+    for (int x = 0; x < CONNECT4_WIDTH; x++)
+      if (pos(x, y)) display[x][y + 1] = colour;
 }
 
