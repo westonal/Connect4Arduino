@@ -10,10 +10,17 @@ test(board_width_and_height_as_expected)
   free(b);
 }
 
-void assertIsEmpty(Board *b) {
+int countOnBoard(Board *b) {
+  int result = 0;
   for (int y = 0; y < b->height; y++)
     for (int x = 0; x < b->width; x++)
-      assertEqual(0, pos(b, x, y));
+      if (pos(b, x, y))
+        result++;
+  return result;
+}
+
+void assertIsEmpty(Board *b) {
+  assertEqual(0, countOnBoard(b));
 }
 
 test(is_blank_when_new)
@@ -120,7 +127,7 @@ test(sixty_four_bit_operations)
 test(can_detect_4_horizontally)
 {
   for (int y = 0; y < CONNECT4_HEIGHT; y++) {
-    for (int x = 0; x <= 4; x++) {
+    for (int x = 0; x <= (CONNECT4_WIDTH - 4); x++) {
       Board *b = createBoard();
       Board *resultBoard = createBoard();
       assertEqual(0, checkWin(b, resultBoard));
@@ -140,6 +147,31 @@ test(can_detect_4_horizontally)
       for (int c = x + 4; c < CONNECT4_WIDTH; c++) {
         assertEqual(0, pos(resultBoard, c, y));
       }
+      assertEqual(4, countOnBoard(resultBoard));
+      free(b);
+      free(resultBoard);
+    }
+  }
+}
+
+test(can_detect_4_vertically)
+{
+  for (int x = 0; x < CONNECT4_WIDTH; x++) {
+    for (int y = 0; y <= (CONNECT4_HEIGHT - 4); y++) {
+      Board *b = createBoard();
+      Board *resultBoard = createBoard();
+      assertEqual(0, checkWin(b, resultBoard));
+      mark(b, x, y);
+      mark(b, x, y + 1);
+      mark(b, x, y + 2);
+      assertEqual(0, checkWin(b, resultBoard));
+      assertIsEmpty(resultBoard);
+      mark(b, x, y + 3);
+      assertEqual(1, checkWin(b, resultBoard));
+      for (int c = y; c < y + 4; c++) {
+        assertEqual(1, pos(resultBoard, x, c));
+      }
+      assertEqual(4, countOnBoard(resultBoard));
       free(b);
       free(resultBoard);
     }
