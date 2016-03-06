@@ -31,8 +31,10 @@ void animate(Connect4Game *thiz, long timeMs) {
     display[animation->x][y + 1] = animation->colour;
     animation = animation->next;
   }
+}
 
-  animation = thiz->animations;
+void tidyCompleteAnimations(Connect4Game *thiz) {
+  MoveAnimation *animation = thiz->animations;
   while (animation && animation->complete) {
     free(animation);
     animation = animation->next;
@@ -51,6 +53,7 @@ void Connect4Game_loop(Connect4Game *thiz, long timeMs) {
   draw(thiz->green, GREEN);
 
   animate(thiz, timeMs);
+  tidyCompleteAnimations(thiz);
 }
 
 void MoveAnimation_addAnimation(MoveAnimation *thiz, MoveAnimation *animation) {
