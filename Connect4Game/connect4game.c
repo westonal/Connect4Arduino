@@ -16,6 +16,7 @@ int getTurnColour(Connect4Game *thiz) {
 }
 
 #define PER_STEP_SPEED_MS (100)
+#define MOVES_MUST_BE_APART_BY_MS (500)
 
 void animate(Connect4Game *thiz, long timeMs) {
   MoveAnimation *animation = thiz->animations;
@@ -43,11 +44,13 @@ void tidyCompleteAnimations(Connect4Game *thiz) {
 }
 
 void Connect4Game_loop(Connect4Game *thiz, long timeMs) {
-  Connect4Game_processMove(thiz, timeMs);
-
-  for (int x = 0; x < 8; x++)
-    display[x][0] = OFF;
-  display[thiz->pos][0] = getTurnColour(thiz);
+  if (timeMs > thiz->lockedOutUntil) {
+    for (int x = 0; x < 8; x++)
+      display[x][0] = OFF;
+    display[thiz->pos][0] = getTurnColour(thiz);
+    
+    Connect4Game_processMove(thiz, timeMs);
+  }
 
   draw(thiz->red, RED);
   draw(thiz->green, GREEN);
@@ -104,6 +107,7 @@ void Connect4Game_processMove(Connect4Game *thiz, long timeMs) {
           animation->startTime = timeMs;
           Connect4Game_addAnimation(thiz, animation);
           thiz->turn = 1 - thiz->turn;
+          thiz->lockedOutUntil = timeMs + MOVES_MUST_BE_APART_BY_MS;
           break;
         }
       }

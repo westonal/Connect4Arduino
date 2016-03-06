@@ -28,6 +28,7 @@ typedef struct Connect4Game {
   int pos;
   int turn;
   int mode;
+  long lockedOutUntil;
   MoveAnimation *animations;
 } Connect4Game;
 
