@@ -112,7 +112,7 @@ void loop() {
 
   //digitalClockLoop();
 
-  Connect4Game_loop(theGame);
+  Connect4Game_loop(theGame, millis());
 
   //call often
   drawDisplay();
