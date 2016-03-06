@@ -2,61 +2,54 @@
 
 #include <ArduinoUnit.h>
 
-//test(board_width_and_height_as_expected)
-//{
-//  Board b;
-//  assertEqual(8, b.width());
-//  assertEqual(7, b.height());
-//}
-
-test(board_width_and_height_as_expected_new)
+test(board_width_and_height_as_expected)
 {
-  Board *b = new Board;
-  assertEqual(8, b->width());
-  assertEqual(7, b->height());
-  delete(b);
+  Board *b = createBoard();
+  assertEqual(8, b->width);
+  assertEqual(7, b->height);
+  free(b);
 }
 
 test(is_blank_when_new)
 {
-  Board *b = new Board;
-  for (int y = 0; y < b->height(); y++)
-    for (int x = 0; x < b->width(); x++)
-      assertEqual(0, b->pos(x, y));
-  delete(b);
+  Board *b = createBoard();
+  for (int y = 0; y < b->height; y++)
+    for (int x = 0; x < b->width; x++)
+      assertEqual(0, pos(b, x, y));
+  free(b);
 }
 
 test(can_mark_and_read_back_single)
 {
-  Board *b = new Board;
-  b->mark(3, 4);
-  assertEqual(0, b->pos(2, 4));
-  assertEqual(1, b->pos(3, 4));
-  assertEqual(0, b->pos(3, 5));
-  delete(b);
+  Board *b = createBoard();
+  mark(b, 3, 4);
+  assertEqual(0, pos(b, 2, 4));
+  assertEqual(1, pos(b, 3, 4));
+  assertEqual(0, pos(b, 3, 5));
+  free(b);
 }
 
 test(can_mark_two_and_read_back_single)
 {
-  Board *b = new Board;
-  b->mark(3, 4);
-  b->mark(4, 5);
-  assertEqual(0, b->pos(2, 4));
-  assertEqual(1, b->pos(3, 4));
-  assertEqual(1, b->pos(4, 5));
-  assertEqual(0, b->pos(3, 5));
-  delete(b);
+  Board *b = createBoard();
+  mark(b, 3, 4);
+  mark(b, 4, 5);
+  assertEqual(0, pos(b, 2, 4));
+  assertEqual(1, pos(b, 3, 4));
+  assertEqual(1, pos(b, 4, 5));
+  assertEqual(0, pos(b, 3, 5));
+  free(b);
 }
 
 test(can_mark_each_and_read_back)
 {
-  Board *b = new Board;
-  for (int y = 0; y < b->height(); y++)
-    for (int x = 0; x < b->width(); x++)
+  Board *b = createBoard();
+  for (int y = 0; y < b->height; y++)
+    for (int x = 0; x < b->width; x++)
     {
       //if (b->pos(x, y)==1) {
-      int temp = (b->pos(x, y));
-      if (temp!=0) {
+      int temp = pos(b, x, y);
+      if (temp != 0) {
         Serial.print("Failed: ");
         Serial.print(temp);
         Serial.print(" ");
@@ -64,49 +57,49 @@ test(can_mark_each_and_read_back)
         Serial.print(", ");
         Serial.println(y);
       }
-      assertEqual(0, b->pos(x, y));
-      b->mark(x, y);
-      assertEqual(1, b->pos(x, y));
+      assertEqual(0, pos(b, x, y));
+      mark(b, x, y);
+      assertEqual(1, pos(b, x, y));
     }
-  delete(b);
+  free(b);
 }
 
 test(can_combine_two_boards)
 {
-  Board *b1 = new Board;
-  Board *b2 = new Board;
-  b1->mark(3, 4);
-  b2->mark(4, 5);
+  Board *b1 = createBoard();
+  Board *b2 = createBoard();
+  mark(b1, 3, 4);
+  mark(b2, 4, 5);
 
-  assertEqual(0, b1->pos(2, 4));
-  assertEqual(1, b1->pos(3, 4));
-  assertEqual(0, b1->pos(4, 5));
-  assertEqual(0, b1->pos(3, 5));
+  assertEqual(0, pos(b1, 2, 4));
+  assertEqual(1, pos(b1, 3, 4));
+  assertEqual(0, pos(b1, 4, 5));
+  assertEqual(0, pos(b1, 3, 5));
 
-  assertEqual(0, b2->pos(2, 4));
-  assertEqual(0, b2->pos(3, 4));
-  assertEqual(1, b2->pos(4, 5));
-  assertEqual(0, b2->pos(3, 5));
+  assertEqual(0, pos(b2, 2, 4));
+  assertEqual(0, pos(b2, 3, 4));
+  assertEqual(1, pos(b2, 4, 5));
+  assertEqual(0, pos(b2, 3, 5));
 
-  Board* bc = b1->createCombined(b2);
-  assertEqual(0, b1->pos(2, 4));
-  assertEqual(1, b1->pos(3, 4));
-  assertEqual(0, b1->pos(4, 5));
-  assertEqual(0, b1->pos(3, 5));
+  Board* bc = createCombined(b1, b2);
+  assertEqual(0, pos(b1, 2, 4));
+  assertEqual(1, pos(b1, 3, 4));
+  assertEqual(0, pos(b1, 4, 5));
+  assertEqual(0, pos(b1, 3, 5));
 
-  assertEqual(0, b2->pos(2, 4));
-  assertEqual(0, b2->pos(3, 4));
-  assertEqual(1, b2->pos(4, 5));
-  assertEqual(0, b2->pos(3, 5));
+  assertEqual(0, pos(b2, 2, 4));
+  assertEqual(0, pos(b2, 3, 4));
+  assertEqual(1, pos(b2, 4, 5));
+  assertEqual(0, pos(b2, 3, 5));
 
-  assertEqual(0, bc->pos(2, 4));
-  assertEqual(1, bc->pos(3, 4));
-  assertEqual(1, bc->pos(4, 5));
-  assertEqual(0, bc->pos(3, 5));
+  assertEqual(0, pos(bc, 2, 4));
+  assertEqual(1, pos(bc, 3, 4));
+  assertEqual(1, pos(bc, 4, 5));
+  assertEqual(0, pos(bc, 3, 5));
 
-  delete(b1);
-  delete(b2);
-  delete(bc);
+  free(b1);
+  free(b2);
+  free(bc);
 }
 
 test(sixty_four_bit_operations)
