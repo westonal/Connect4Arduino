@@ -30,6 +30,7 @@ typedef struct Connect4Game {
   int turn;
   int mode;
   long lockedOutUntil;
+  int winnerColour;
   MoveAnimation *animations;
 } Connect4Game;
 

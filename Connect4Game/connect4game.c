@@ -45,7 +45,7 @@ void tidyCompleteAnimations(Connect4Game *thiz) {
 }
 
 void Connect4Game_loop(Connect4Game *thiz, long timeMs) {
-  if (timeMs > thiz->lockedOutUntil) {
+  if (timeMs > thiz->lockedOutUntil && thiz->winnerColour == 0) {
     for (int x = 0; x < 8; x++)
       display[x][0] = OFF;
     display[thiz->pos][0] = getTurnColour(thiz);
@@ -62,6 +62,10 @@ void Connect4Game_loop(Connect4Game *thiz, long timeMs) {
   if (!thiz->animations) {
     if (timeMs % 1000 > 750) {
       draw(thiz->winBoard, ORANGE);
+    }
+    if (thiz->winnerColour) {
+      for (int x = 0; x < 8; x++)
+        display[x][0] = thiz->winnerColour;
     }
   }
 }
@@ -104,13 +108,14 @@ void Connect4Game_processMove(Connect4Game *thiz, long timeMs) {
   if (digitalRead(input_centre) == LOW) {
     if ((thiz->mode & BTN_DOWN_CENTRE) == 0) {
       Board *b = thiz->turn == TURN_RED ? thiz->red : thiz->green;
+      int turnColour = getTurnColour(thiz);
       for (int y = CONNECT4_HEIGHT - 1; y >= 0; y--) {
         if (!pos(thiz->both, thiz->pos, y)) {
           mark(b, thiz->pos, y);
           MoveAnimation *animation = calloc(1, sizeof(MoveAnimation));
           animation->x = thiz->pos;
           animation->targetY = y;
-          animation->colour = getTurnColour(thiz);
+          animation->colour = turnColour;
           animation->startTime = timeMs;
           Connect4Game_addAnimation(thiz, animation);
           thiz->turn = 1 - thiz->turn;
@@ -119,8 +124,9 @@ void Connect4Game_processMove(Connect4Game *thiz, long timeMs) {
         }
       }
       createCombined(thiz->both, thiz->red, thiz->green);
-      checkWin(thiz->red, thiz->winBoard);
-      checkWin(thiz->green, thiz->winBoard);
+      if (checkWin(b, thiz->winBoard)) {
+        thiz->winnerColour = turnColour;
+      }
     }
     thiz->mode |= BTN_DOWN_CENTRE;
   } else {
