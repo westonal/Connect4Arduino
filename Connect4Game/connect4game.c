@@ -76,7 +76,9 @@ void Connect4Game_loop(Connect4Game *thiz, long timeMs) {
       draw(thiz->winBoard, ORANGE);
     }
     if (thiz->winnerColour) {
-      for (int x = 0; x < 8; x++)
+      int i = (timeMs / 100) % 7;
+      if (i > 3) i = 6 - i;
+      for (int x = i; x < 8 - i; x++)
         display[x][0] = thiz->winnerColour;
       if (digitalRead(input_centre) == LOW) {
         thiz->mode |= BTN_DOWN_CENTRE;
