@@ -8,6 +8,7 @@ Connect4Game *CreateConnect4Game() {
   n->red = createBoard();
   n->green = createBoard();
   n->both = createBoard();
+  n->winBoard = createBoard();
   return n;
 }
 
@@ -48,7 +49,7 @@ void Connect4Game_loop(Connect4Game *thiz, long timeMs) {
     for (int x = 0; x < 8; x++)
       display[x][0] = OFF;
     display[thiz->pos][0] = getTurnColour(thiz);
-    
+
     Connect4Game_processMove(thiz, timeMs);
   }
 
@@ -57,6 +58,12 @@ void Connect4Game_loop(Connect4Game *thiz, long timeMs) {
 
   animate(thiz, timeMs);
   tidyCompleteAnimations(thiz);
+
+  if (!thiz->animations) {
+    if (timeMs % 1000 > 750) {
+      draw(thiz->winBoard, ORANGE);
+    }
+  }
 }
 
 void MoveAnimation_addAnimation(MoveAnimation *thiz, MoveAnimation *animation) {
@@ -112,6 +119,8 @@ void Connect4Game_processMove(Connect4Game *thiz, long timeMs) {
         }
       }
       createCombined(thiz->both, thiz->red, thiz->green);
+      checkWin(thiz->red, thiz->winBoard);
+      checkWin(thiz->green, thiz->winBoard);
     }
     thiz->mode |= BTN_DOWN_CENTRE;
   } else {

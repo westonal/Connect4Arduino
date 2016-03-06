@@ -25,6 +25,7 @@ typedef struct Connect4Game {
   Board* red;
   Board* green;
   Board* both;
+  Board* winBoard;
   int pos;
   int turn;
   int mode;
