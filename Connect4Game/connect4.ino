@@ -10,12 +10,16 @@ test(board_width_and_height_as_expected)
   free(b);
 }
 
-test(is_blank_when_new)
-{
-  Board *b = createBoard();
+void assertIsEmpty(Board *b) {
   for (int y = 0; y < b->height; y++)
     for (int x = 0; x < b->width; x++)
       assertEqual(0, pos(b, x, y));
+}
+
+test(is_blank_when_new)
+{
+  Board *b = createBoard();
+  assertIsEmpty(b);
   free(b);
 }
 
@@ -111,6 +115,29 @@ test(sixty_four_bit_operations)
   uint64_t a2 = 1LL << 62;
   uint64_t b2 = a2 >> 62;
   assertEqual(1, (int)(b2));
+}
+
+test(can_detect_4_horizontally)
+{
+  for (int y = 0; y < CONNECT4_HEIGHT; y++) {
+    for (int x = 0; x <= 4; x++) {
+      Board *b = createBoard();
+      Board *resultBoard = createBoard();
+      assertEqual(0, checkWin(b, resultBoard));
+      mark(b, x, y);
+      mark(b, x + 1, y);
+      mark(b, x + 2, y);
+      assertEqual(0, checkWin(b, resultBoard));
+      assertIsEmpty(resultBoard);
+      mark(b, x + 3, y);
+      assertEqual(1, checkWin(b, resultBoard));
+      for (int c = x; c < x + 4; c++) {
+        assertEqual(1, pos( resultBoard, c, y));
+      }
+      free(b);
+      free(resultBoard);
+    }
+  }
 }
 
 

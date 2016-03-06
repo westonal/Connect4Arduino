@@ -39,3 +39,28 @@ void draw(Board *board, int colour) {
       if (pos(board, x, y)) display[x][y + 1] = colour;
 }
 
+int checkHozWin(Board *board, Board *resultBoard) {
+  int result = 0;
+  for (int y = 0; y < CONNECT4_HEIGHT; y++) {
+    int inARow = 0;
+    for (int x = 0; x < CONNECT4_WIDTH; x++) {
+      if (pos(board, x, y)) {
+        inARow++;
+        if (inARow >= 4) {
+          result++;
+          for (int i = x - inARow; i <= x; i++)
+            mark(resultBoard, i, y);
+        }
+      }
+      else {
+        inARow = 0;
+      }
+    }
+  }
+  return result;
+}
+
+int checkWin(Board *board, Board *resultBoard) {
+  return checkHozWin(board, resultBoard);
+}
+
