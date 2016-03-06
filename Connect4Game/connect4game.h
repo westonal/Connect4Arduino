@@ -8,10 +8,15 @@
 #define BTN_DOWN_RIGHT (2)
 #define BTN_DOWN_CENTRE (4)
 
+#define TURN_GREEN (0)
+#define TURN_RED (1)
+
 typedef struct Connect4Game {
     Board* red;
     Board* green;
+    Board* both;
     int pos;
+    int turn;
     int mode;
 } Connect4Game;
 

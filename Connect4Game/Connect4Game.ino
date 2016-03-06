@@ -107,7 +107,7 @@ void digitalClockLoop() {
 }
 
 void loop() {
-  tests();
+  //tests();
   clearDisplay(OFF);
 
   //digitalClockLoop();

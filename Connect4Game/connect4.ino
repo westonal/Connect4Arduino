@@ -81,7 +81,8 @@ test(can_combine_two_boards)
   assertEqual(1, pos(b2, 4, 5));
   assertEqual(0, pos(b2, 3, 5));
 
-  Board* bc = createCombined(b1, b2);
+  Board* bc = createBoard();
+  createCombined(bc, b1, b2);
   assertEqual(0, pos(b1, 2, 4));
   assertEqual(1, pos(b1, 3, 4));
   assertEqual(0, pos(b1, 4, 5));
