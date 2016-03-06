@@ -72,10 +72,10 @@ void Connect4Game_loop(Connect4Game *thiz, long timeMs) {
   tidyCompleteAnimations(thiz);
 
   if (!thiz->animations) {
-    if (timeMs % 600 > 400) {
-      draw(thiz->winBoard, ORANGE);
-    }
     if (thiz->winnerColour) {
+      if (timeMs % 600 > 400) {
+        draw(thiz->winBoard, ORANGE);
+      }
       int i = (timeMs / 100) % 7;
       if (i > 3) i = 6 - i;
       for (int x = i; x < 8 - i; x++)
