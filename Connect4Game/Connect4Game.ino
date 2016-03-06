@@ -89,6 +89,7 @@ void digitalClockLoop() {
      }
     // mode |= DOWN_RIGHT;
   } else {
+    
     mode = mode & ~DOWN_RIGHT;
   }
 

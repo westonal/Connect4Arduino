@@ -2,7 +2,14 @@
 
 #include <ArduinoUnit.h>
 
-test(board_width_and_height_as_expected)
+//test(board_width_and_height_as_expected)
+//{
+//  Board b;
+//  assertEqual(8, b.width());
+//  assertEqual(7, b.height());
+//}
+
+test(board_width_and_height_as_expected_new)
 {
   Board *b = new Board;
   assertEqual(8, b->width());

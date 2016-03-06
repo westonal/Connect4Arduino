@@ -5,7 +5,6 @@
 #define CONNECT4_HEIGHT (7)
 
 class Board {
-    unsigned int _pos[4];
   public:
     Board();
     int width();
@@ -14,9 +13,11 @@ class Board {
     void mark(int, int);
     Board* createCombined(const Board* other);
     void draw(int colour);
+  private:  
+    unsigned int _pos[4];
 };
 
-Board::Board () {
+Board::Board () : _pos{0,0,0,0} {
   Serial.println("Created new board");
 }
 
