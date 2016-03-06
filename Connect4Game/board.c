@@ -81,9 +81,8 @@ int checkVertWin(Board *board, Board *resultBoard) {
   return result;
 }
 
-int checkDiagWinInSubBox(Board *board, Board *resultBoard, int xs, int ys) {
+int checkDiagWinInSubBoxDirection1(Board *board, Board *resultBoard, int xs, int ys) {
   int result = 0;
-  int inARow = 0;
   for (int i = 0; i < 4; i++) {
     if (!pos(board, xs + i, ys + i))
       return 0;
@@ -94,11 +93,23 @@ int checkDiagWinInSubBox(Board *board, Board *resultBoard, int xs, int ys) {
   return 1;
 }
 
+int checkDiagWinInSubBoxDirection2(Board *board, Board *resultBoard, int xs, int ys) {
+  int result = 0;
+  for (int i = 0; i < 4; i++) {
+    if (!pos(board, xs + (3 - i), ys + i))
+      return 0;
+  }
+  for (int i = 0; i < 4; i++) {
+    mark(resultBoard,  xs + (3 - i), ys + i);
+  }
+  return 1;
+}
+
 int checkDiagWin(Board *board, Board *resultBoard) {
   int result = 0;
   for (int x = 0; x <= (CONNECT4_WIDTH - 4); x++)
     for (int y = 0; y <= (CONNECT4_HEIGHT - 4); y++)
-      result += checkDiagWinInSubBox(board, resultBoard, x, y);
+      result += checkDiagWinInSubBoxDirection1(board, resultBoard, x, y) + checkDiagWinInSubBoxDirection2(board, resultBoard, x, y);
   return result;
 }
 

@@ -196,4 +196,27 @@ test(can_detect_4_diag_1)
   }
 }
 
+test(can_detect_4_diag_2)
+{
+  for (int x = 0; x <= (CONNECT4_WIDTH - 4); x++) {
+    for (int y = 0; y <= (CONNECT4_HEIGHT - 4); y++) {
+      Board *b = createBoard();
+      Board *resultBoard = createBoard();
+      assertEqual(0, checkWin(b, resultBoard));
+      mark(b, x + 3, y);
+      mark(b, x + 2, y + 1);
+      mark(b, x + 1, y + 2);
+      assertEqual(0, checkWin(b, resultBoard));
+      assertIsEmpty(resultBoard);
+      mark(b, x, y + 3);
+      assertEqual(1, checkWin(b, resultBoard));
+      for (int c = 0; c < 4; c++) {
+        assertEqual(1, pos(resultBoard, x + (3 - c), y + c));
+      }
+      assertEqual(4, countOnBoard(resultBoard));
+      free(b);
+      free(resultBoard);
+    }
+  }
+}
 
