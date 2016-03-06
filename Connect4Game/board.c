@@ -48,7 +48,7 @@ int checkHozWin(Board *board, Board *resultBoard) {
         inARow++;
         if (inARow >= 4) {
           result++;
-          for (int i = x - inARow; i <= x; i++)
+          for (int i = x - inARow + 1; i <= x; i++)
             mark(resultBoard, i, y);
         }
       }
