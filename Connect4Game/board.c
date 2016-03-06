@@ -85,3 +85,9 @@ int checkWin(Board *board, Board *resultBoard) {
   return checkHozWin(board, resultBoard) + checkVertWin(board, resultBoard);
 }
 
+void reset(Board *board) {
+  for (int i = 0; i < 4; i++) {
+    board->_pos[i] = 0;
+  }
+}
+

@@ -44,6 +44,18 @@ void tidyCompleteAnimations(Connect4Game *thiz) {
   }
 }
 
+void resetGame(Connect4Game *thiz) {
+  reset(thiz->red);
+  reset(thiz->green);
+  reset(thiz->both);
+  reset(thiz->winBoard);
+  thiz->pos = 0;
+  thiz->turn = 0;
+  thiz->mode = 0;
+  thiz->lockedOutUntil = 0;
+  thiz->winnerColour = 0;
+}
+
 void Connect4Game_loop(Connect4Game *thiz, long timeMs) {
   if (timeMs > thiz->lockedOutUntil && thiz->winnerColour == 0) {
     for (int x = 0; x < 8; x++)
@@ -66,6 +78,11 @@ void Connect4Game_loop(Connect4Game *thiz, long timeMs) {
     if (thiz->winnerColour) {
       for (int x = 0; x < 8; x++)
         display[x][0] = thiz->winnerColour;
+      if (digitalRead(input_centre) == LOW) {
+        thiz->mode |= BTN_DOWN_CENTRE;
+        resetGame(thiz);
+        thiz->lockedOutUntil = timeMs + MOVES_MUST_BE_APART_BY_MS;
+      }
     }
   }
 }

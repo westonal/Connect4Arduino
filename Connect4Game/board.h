@@ -16,4 +16,5 @@ void mark(Board *board, int x, int y);
 void createCombined(Board* target, Board *b1, Board *b2);
 void draw(Board *board, int colour);
 int checkWin(Board *board, Board *resultBoard);
+void reset(Board *board);
 
