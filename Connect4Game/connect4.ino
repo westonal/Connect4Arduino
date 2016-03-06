@@ -138,14 +138,8 @@ test(can_detect_4_horizontally)
       assertIsEmpty(resultBoard);
       mark(b, x + 3, y);
       assertEqual(1, checkWin(b, resultBoard));
-      for (int c = 0; c < x; c++) {
-        assertEqual(0, pos(resultBoard, c, y));
-      }
       for (int c = x; c < x + 4; c++) {
         assertEqual(1, pos(resultBoard, c, y));
-      }
-      for (int c = x + 4; c < CONNECT4_WIDTH; c++) {
-        assertEqual(0, pos(resultBoard, c, y));
       }
       assertEqual(4, countOnBoard(resultBoard));
       free(b);
