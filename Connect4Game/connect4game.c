@@ -124,10 +124,18 @@ Board *getCurrentPlayersBoard(Connect4Game *thiz) {
   return thiz->turn == TURN_RED ? thiz->red : thiz->green;
 }
 
+Board *getOtherPlayersBoard(Connect4Game *thiz) {
+  return thiz->turn == TURN_GREEN ? thiz->red : thiz->green;
+}
+
 int getAvailableYPosition(Board *both, int x) {
   for (int y = CONNECT4_HEIGHT - 1; y >= 0; y--)
     if (!pos(both, x, y)) return y;
   return -1;
+}
+
+void toggleTurn(Connect4Game * thiz) {
+  thiz->turn = 1 - thiz->turn;
 }
 
 void playMove(Connect4Game * thiz, int x, long timeMs) {
@@ -146,7 +154,7 @@ void playMove(Connect4Game * thiz, int x, long timeMs) {
     if (checkWin(playersBoard, thiz->winBoard)) {
       thiz->winnerColour = turnColour;
     }
-    thiz->turn = 1 - thiz->turn;
+    toggleTurn(thiz);
     thiz->lockedOutUntil = timeMs + MOVES_MUST_BE_APART_BY_MS;
   }
 }
@@ -167,23 +175,38 @@ void Connect4Game_processMove(Connect4Game * thiz, long timeMs, ButtonStates * s
   }
 }
 
-int aiTestMoveSequence(Connect4Game * thiz, int move1x) {
+int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
   Board *playersBoard = getCurrentPlayersBoard(thiz);
+  Board *opponentsBoard = getOtherPlayersBoard(thiz);
   Board *both = thiz->both;
+  int result = 0;
   int y = getAvailableYPosition(thiz->both, move1x);
   if (y == -1) return 0;
+
   mark(playersBoard, move1x, y);
+  mark(both, move1x, y);
   int win = checkWin(playersBoard, thiz->winBoard);
-  unmark(playersBoard, move1x, y);
   if (win) {
-    return 1;
+    result = 1;
+  } else if (n > 1) {
+    toggleTurn(thiz);
+    for (int opponentX = 0; opponentX < CONNECT4_WIDTH; opponentX++) {
+      int opponentMoveQuality = aiTestMoveSequence(thiz, opponentX, n - 1);
+      if (opponentMoveQuality > 0) {
+        result = -1;
+      }
+    }
+    toggleTurn(thiz);
   }
-  return 0;
+  unmark(both, move1x, y);
+  unmark(playersBoard, move1x, y);
+  return result;
 }
 
 int aiChooseMove(Connect4Game * thiz) {
   for (int x = 0; x < CONNECT4_WIDTH; x++) {
-    if (aiTestMoveSequence(thiz, x)) {
+    int moveQuality = aiTestMoveSequence(thiz, x, 2);
+    if (moveQuality > 0) {
       return x;
     }
   }

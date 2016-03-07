@@ -9,13 +9,13 @@ int givenMovesMakeAiChoice(char *moves) {
   return aiChoice;
 }
 
-test(ai_simple_win)
+test(ai_win_in_one_move_tests)
 {
   assertEqual(3, givenMovesMakeAiChoice("001122"));
-}
-
-test(ai_simple_win_2)
-{
   assertEqual(2, givenMovesMakeAiChoice("00113344"));
 }
 
+test(ai_cant_win_but_must_block)
+{
+  assertEqual(4, givenMovesMakeAiChoice("2233555"));
+}
