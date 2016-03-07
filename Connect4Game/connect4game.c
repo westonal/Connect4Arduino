@@ -204,13 +204,18 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
 }
 
 int aiChooseMove(Connect4Game * thiz) {
-  for (int x = 0; x < CONNECT4_WIDTH; x++) {
-    int moveQuality = aiTestMoveSequence(thiz, x, 2);
-    if (moveQuality > 0) {
-      return x;
+  int moves[CONNECT4_WIDTH];
+  for (int x = 0; x < CONNECT4_WIDTH; x++)
+    moves[x] = aiTestMoveSequence(thiz, x, 2);
+
+  int bestMove = -1000;
+  int n = 0;
+  for (int x = 0; x < CONNECT4_WIDTH; x++)
+    if (moves[x] > bestMove) {
+      bestMove = moves[x];
+      n = x;
     }
-  }
-  return -1;
+  return n;
 }
 
 void applyMoves(Connect4Game * thiz, char *sequence) {
