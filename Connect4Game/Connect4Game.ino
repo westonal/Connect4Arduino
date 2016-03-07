@@ -30,8 +30,8 @@ void setup() {
   theGame = CreateConnect4Game();
   states = CreateButtonStates();
   
-  states->repeat1TimeMs = 1500;
-  states->repeatNTimeMs = 500;
+  states->repeat1TimeMs = 750;
+  states->repeatNTimeMs = 200;
 }
 
 int moveLocation;
