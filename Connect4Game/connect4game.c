@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "connect4game.h"
 #include "display.h"
+#include "buttons.h"
 
 Connect4Game *CreateConnect4Game() {
   //Serial.println("Created new game");

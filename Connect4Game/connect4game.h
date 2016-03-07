@@ -4,10 +4,6 @@
 
 #include "board.h"
 
-#define BTN_DOWN_LEFT (1)
-#define BTN_DOWN_RIGHT (2)
-#define BTN_DOWN_CENTRE (4)
-
 #define TURN_GREEN (0)
 #define TURN_RED (1)
 
