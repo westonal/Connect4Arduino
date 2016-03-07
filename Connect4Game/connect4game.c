@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include "connect4game.h"
 #include "display.h"
-#include "buttons.h"
 
 Connect4Game *CreateConnect4Game() {
   //Serial.println("Created new game");
@@ -52,18 +51,19 @@ void resetGame(Connect4Game *thiz) {
   reset(thiz->winBoard);
   thiz->pos = 0;
   thiz->turn = 0;
-  thiz->mode = 0;
   thiz->lockedOutUntil = 0;
   thiz->winnerColour = 0;
 }
 
-void Connect4Game_loop(Connect4Game *thiz, long timeMs) {
+void Connect4Game_processMove(Connect4Game *thiz, long timeMs, ButtonStates *states);
+
+void Connect4Game_loop(Connect4Game *thiz, long timeMs, ButtonStates *states) {
   if (timeMs > thiz->lockedOutUntil && thiz->winnerColour == 0) {
     for (int x = 0; x < 8; x++)
       display[x][0] = OFF;
     display[thiz->pos][0] = getTurnColour(thiz);
 
-    Connect4Game_processMove(thiz, timeMs);
+    Connect4Game_processMove(thiz, timeMs, states);
   }
 
   draw(thiz->red, RED);
@@ -81,8 +81,8 @@ void Connect4Game_loop(Connect4Game *thiz, long timeMs) {
       if (i > 3) i = 6 - i;
       for (int x = i; x < 8 - i; x++)
         display[x][0] = thiz->winnerColour;
-      if (digitalRead(input_centre) == LOW) {
-        thiz->mode |= BTN_DOWN_CENTRE;
+      int mode = readButtons(states, timeMs);
+      if (mode & BTN_DOWN_CENTRE) {
         resetGame(thiz);
         thiz->lockedOutUntil = timeMs + MOVES_MUST_BE_APART_BY_MS;
       }
@@ -106,51 +106,38 @@ void Connect4Game_addAnimation(Connect4Game *thiz, MoveAnimation *animation) {
   }
 }
 
-void Connect4Game_processMove(Connect4Game *thiz, long timeMs) {
-  if (digitalRead(input_left) == LOW) {
-    if ((thiz->mode & BTN_DOWN_LEFT) == 0) {
-      thiz->pos = (thiz->pos + (CONNECT4_WIDTH - 1)) % CONNECT4_WIDTH;
-    }
-    thiz->mode |= BTN_DOWN_LEFT;
-  } else {
-    thiz->mode = thiz->mode & ~BTN_DOWN_LEFT;
+void Connect4Game_processMove(Connect4Game *thiz, long timeMs, ButtonStates *states) {
+  int mode = readButtons(states, timeMs);
+
+  if (mode & BTN_DOWN_LEFT) {
+    thiz->pos = (thiz->pos + (CONNECT4_WIDTH - 1)) % CONNECT4_WIDTH;
   }
 
-  if (digitalRead(input_right) == LOW) {
-    if ((thiz->mode & BTN_DOWN_RIGHT) == 0) {
-      thiz->pos = (thiz->pos + 1) % CONNECT4_WIDTH;
-    }
-    thiz->mode |= BTN_DOWN_RIGHT;
-  } else {
-    thiz->mode = thiz->mode & ~BTN_DOWN_RIGHT;
+  if (mode & BTN_DOWN_RIGHT) {
+    thiz->pos = (thiz->pos + 1) % CONNECT4_WIDTH;
   }
 
-  if (digitalRead(input_centre) == LOW) {
-    if ((thiz->mode & BTN_DOWN_CENTRE) == 0) {
-      Board *b = thiz->turn == TURN_RED ? thiz->red : thiz->green;
-      int turnColour = getTurnColour(thiz);
-      for (int y = CONNECT4_HEIGHT - 1; y >= 0; y--) {
-        if (!pos(thiz->both, thiz->pos, y)) {
-          mark(b, thiz->pos, y);
-          MoveAnimation *animation = calloc(1, sizeof(MoveAnimation));
-          animation->x = thiz->pos;
-          animation->targetY = y;
-          animation->colour = turnColour;
-          animation->startTime = timeMs;
-          Connect4Game_addAnimation(thiz, animation);
-          thiz->turn = 1 - thiz->turn;
-          thiz->lockedOutUntil = timeMs + MOVES_MUST_BE_APART_BY_MS;
-          break;
-        }
-      }
-      createCombined(thiz->both, thiz->red, thiz->green);
-      if (checkWin(b, thiz->winBoard)) {
-        thiz->winnerColour = turnColour;
+  if (mode & BTN_DOWN_CENTRE) {
+    Board *b = thiz->turn == TURN_RED ? thiz->red : thiz->green;
+    int turnColour = getTurnColour(thiz);
+    for (int y = CONNECT4_HEIGHT - 1; y >= 0; y--) {
+      if (!pos(thiz->both, thiz->pos, y)) {
+        mark(b, thiz->pos, y);
+        MoveAnimation *animation = calloc(1, sizeof(MoveAnimation));
+        animation->x = thiz->pos;
+        animation->targetY = y;
+        animation->colour = turnColour;
+        animation->startTime = timeMs;
+        Connect4Game_addAnimation(thiz, animation);
+        thiz->turn = 1 - thiz->turn;
+        thiz->lockedOutUntil = timeMs + MOVES_MUST_BE_APART_BY_MS;
+        break;
       }
     }
-    thiz->mode |= BTN_DOWN_CENTRE;
-  } else {
-    thiz->mode = thiz->mode & ~BTN_DOWN_CENTRE;
+    createCombined(thiz->both, thiz->red, thiz->green);
+    if (checkWin(b, thiz->winBoard)) {
+      thiz->winnerColour = turnColour;
+    }
   }
 }
 

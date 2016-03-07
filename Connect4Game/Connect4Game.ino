@@ -104,9 +104,9 @@ void loop() {
   tests();
   clearDisplay(OFF);
 
-  digitalClockLoop();
+  //digitalClockLoop();
 
-  //Connect4Game_loop(theGame, millis());
+  Connect4Game_loop(theGame, millis(), states);
 
   //call often
   drawDisplay();
