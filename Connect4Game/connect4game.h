@@ -32,4 +32,7 @@ typedef struct Connect4Game {
 
 Connect4Game *CreateConnect4Game();
 void Connect4Game_loop(Connect4Game *thiz, long timeMs, ButtonStates *states);
+void playMove(Connect4Game *thiz, int x, long timeMs);
+
+int aiChooseMove(Connect4Game *game);
 

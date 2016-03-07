@@ -29,9 +29,18 @@ void setup() {
 
   theGame = CreateConnect4Game();
   states = CreateButtonStates();
-  
+
   states->repeat1TimeMs = 750;
   states->repeatNTimeMs = 200;
+
+  int ms = millis();
+  playMove(theGame, 0, 0);
+  playMove(theGame, 0, 0);
+  playMove(theGame, 1, 0);
+  playMove(theGame, 1, 0);
+  playMove(theGame, 2, 0);
+  playMove(theGame, 2, 0);
+  playMove(theGame, aiChooseMove(theGame), ms);
 }
 
 int moveLocation;

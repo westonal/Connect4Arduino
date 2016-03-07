@@ -71,20 +71,30 @@ test(can_mark_each_and_read_back)
   for (int y = 0; y < b->height; y++)
     for (int x = 0; x < b->width; x++)
     {
-      //if (b->pos(x, y)==1) {
       int temp = pos(b, x, y);
-      if (temp != 0) {
-        Serial.print("Failed: ");
-        Serial.print(temp);
-        Serial.print(" ");
-        Serial.print(x);
-        Serial.print(", ");
-        Serial.println(y);
-      }
       assertEqual(0, pos(b, x, y));
       mark(b, x, y);
       assertEqual(1, pos(b, x, y));
     }
+  free(b);
+}
+
+test(can_mark_and_unmark_each_and_read_back)
+{
+  Board *b = createBoard();
+  for (int y = 0; y < b->height; y++)
+    for (int x = 0; x < b->width; x++)
+      mark(b, x, y);
+  assertEqual(CONNECT4_WIDTH * CONNECT4_HEIGHT, countOnBoard(b));
+  
+  for (int y = 0; y < b->height; y++)
+    for (int x = 0; x < b->width; x++)
+    {
+      unmark(b, x, y);
+      assertEqual(0, pos(b, x, y));
+    }
+    
+  assertEqual(0, countOnBoard(b));
   free(b);
 }
 

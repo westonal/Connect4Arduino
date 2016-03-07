@@ -106,7 +106,38 @@ void Connect4Game_addAnimation(Connect4Game *thiz, MoveAnimation *animation) {
   }
 }
 
-void Connect4Game_processMove(Connect4Game *thiz, long timeMs, ButtonStates *states) {
+Board *getCurrentPlayersBoard(Connect4Game *thiz) {
+  return thiz->turn == TURN_RED ? thiz->red : thiz->green;
+}
+
+int getAvailableYPosition(Board *both, int x) {
+  for (int y = CONNECT4_HEIGHT - 1; y >= 0; y--)
+    if (!pos(both, x, y)) return y;
+  return -1;
+}
+
+void playMove(Connect4Game * thiz, int x, long timeMs) {
+  int y = getAvailableYPosition(thiz->both, x);
+  if (y != -1) {
+    Board *playersBoard = getCurrentPlayersBoard(thiz);
+    int turnColour = getTurnColour(thiz);
+    mark(playersBoard, x, y);
+    MoveAnimation *animation = calloc(1, sizeof(MoveAnimation));
+    animation->x = x;
+    animation->targetY = y;
+    animation->colour = turnColour;
+    animation->startTime = timeMs;
+    Connect4Game_addAnimation(thiz, animation);
+    createCombined(thiz->both, thiz->red, thiz->green);
+    if (checkWin(playersBoard, thiz->winBoard)) {
+      thiz->winnerColour = turnColour;
+    }
+    thiz->turn = 1 - thiz->turn;
+    thiz->lockedOutUntil = timeMs + MOVES_MUST_BE_APART_BY_MS;
+  }
+}
+
+void Connect4Game_processMove(Connect4Game * thiz, long timeMs, ButtonStates * states) {
   int mode = readButtons(states, timeMs);
 
   if (mode & BTN_DOWN_LEFT) {
@@ -118,26 +149,30 @@ void Connect4Game_processMove(Connect4Game *thiz, long timeMs, ButtonStates *sta
   }
 
   if (mode & BTN_DOWN_CENTRE) {
-    Board *b = thiz->turn == TURN_RED ? thiz->red : thiz->green;
-    int turnColour = getTurnColour(thiz);
-    for (int y = CONNECT4_HEIGHT - 1; y >= 0; y--) {
-      if (!pos(thiz->both, thiz->pos, y)) {
-        mark(b, thiz->pos, y);
-        MoveAnimation *animation = calloc(1, sizeof(MoveAnimation));
-        animation->x = thiz->pos;
-        animation->targetY = y;
-        animation->colour = turnColour;
-        animation->startTime = timeMs;
-        Connect4Game_addAnimation(thiz, animation);
-        thiz->turn = 1 - thiz->turn;
-        thiz->lockedOutUntil = timeMs + MOVES_MUST_BE_APART_BY_MS;
-        break;
-      }
-    }
-    createCombined(thiz->both, thiz->red, thiz->green);
-    if (checkWin(b, thiz->winBoard)) {
-      thiz->winnerColour = turnColour;
+    playMove(thiz, thiz->pos, timeMs);
+  }
+}
+
+int aiTestMoveSequence(Connect4Game * thiz, int move1x) {
+  Board *playersBoard = getCurrentPlayersBoard(thiz);
+  Board *both = thiz->both;
+  int y = getAvailableYPosition(thiz->both, move1x);
+  if (y == -1) return 0;
+  mark(playersBoard, move1x, y);
+  int win = checkWin(playersBoard, thiz->winBoard);
+  unmark(playersBoard, move1x, y);
+  if (win) {
+    return 1;
+  }
+  return 0;
+}
+
+int aiChooseMove(Connect4Game * thiz) {
+  for (int x = 0; x < CONNECT4_WIDTH; x++) {
+    if (aiTestMoveSequence(thiz, x)){
+      return x;
     }
   }
+  return -1;
 }
 
