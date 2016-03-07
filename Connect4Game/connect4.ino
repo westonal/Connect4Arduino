@@ -40,6 +40,19 @@ test(can_mark_and_read_back_single)
   free(b);
 }
 
+test(can_mark_and_unmark_back_single)
+{
+  Board *b = createBoard();
+  mark(b, 2, 4);
+  mark(b, 3, 4);
+  mark(b, 3, 5);
+  unmark(b, 3, 4);
+  assertEqual(1, pos(b, 2, 4));
+  assertEqual(0, pos(b, 3, 4));
+  assertEqual(1, pos(b, 3, 5));
+  free(b);
+}
+
 test(can_mark_two_and_read_back_single)
 {
   Board *b = createBoard();

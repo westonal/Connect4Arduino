@@ -13,6 +13,7 @@ Board *createBoard();
 
 int pos(Board *board, int x, int y);
 void mark(Board *board, int x, int y);
+void unmark(Board *board, int x, int y);
 void createCombined(Board* target, Board *b1, Board *b2);
 void draw(Board *board, int colour);
 int checkWin(Board *board, Board *resultBoard);
