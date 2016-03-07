@@ -1,15 +1,17 @@
 #include <TimeLib.h>
 
 extern "C" {
-  #include "connect4game.h"
-  #include "display.h"
-  #include "pins.h"
-  #include "clock.h"
+#include "connect4game.h"
+#include "display.h"
+#include "pins.h"
+#include "buttons.h"
+#include "clock.h"
 }
 
 int inputs[] = {input_left, input_centre, input_right};
 
 Connect4Game *theGame;
+ButtonStates *states;
 
 void setup() {
   Serial.begin(9600);
@@ -26,6 +28,10 @@ void setup() {
   setTime(1, 2, 0, 1, 1, 2015);
 
   theGame = CreateConnect4Game();
+  states = CreateButtonStates();
+  
+  states->repeat1TimeMs = 750;
+  states->repeatNTimeMs = 200;
 }
 
 int moveLocation;
@@ -68,40 +74,28 @@ void digitalClockDisplay() {
 void digitalClockLoop() {
   clearDisplay(OFF);
 
-  if (digitalRead(input_left) == LOW) {
-    if ((mode & DOWN_LEFT) == 0) {
-      moveLocation = (moveLocation + 7) % 8;
-      setTime((hour() + 1 % 24), minute(), second(), day(), month(), year());
-      digitalClockDisplay();
-      drawDelay(250);
-    }
-    //mode |= DOWN_LEFT;
-  } else {
-    mode = mode & ~DOWN_LEFT;
+  int mode = readButtons(states, millis());
+
+  if (mode & DOWN_LEFT) {
+    Serial.println("New left press");
+    moveLocation = (moveLocation + 7) % 8;
+    setTime((hour() + 1 % 24), minute(), second(), day(), month(), year());
+    digitalClockDisplay();
+    drawDelay(250);
   }
 
-  if (digitalRead(input_right) == LOW) {
-    if ((mode & DOWN_RIGHT) == 0) {
-      moveLocation = (moveLocation + 1) % 8;
-      setTime(hour(), (minute() + 1) % 60, second(), day(), month(), year());
-      digitalClockDisplay();
-      drawDelay(250);
-    }
-    // mode |= DOWN_RIGHT;
-  } else {
-
-    mode = mode & ~DOWN_RIGHT;
+  if (mode & DOWN_RIGHT) {
+    Serial.println("New right press");
+    moveLocation = (moveLocation + 1) % 8;
+    setTime(hour(), (minute() + 1) % 60, second(), day(), month(), year());
+    digitalClockDisplay();
+    drawDelay(250);
   }
 
-  if (digitalRead(input_centre) == LOW) {
-    moveLocation = 3;
+  if (mode & DOWN_CENTRE) {
+    Serial.println("New centre press");
     setTime(hour(), minute(), 0, day(), month(), year());
   }
-
-  for (int x = 0; x < 8; x++)
-    display[x][0] = OFF;
-
-  display[moveLocation][0] = ORANGE;
 
   digitalClockDisplay();
 }
@@ -112,7 +106,7 @@ void loop() {
 
   //digitalClockLoop();
 
-  Connect4Game_loop(theGame, millis());
+  Connect4Game_loop(theGame, millis(), states);
 
   //call often
   drawDisplay();

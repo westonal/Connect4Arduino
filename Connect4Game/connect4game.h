@@ -3,10 +3,7 @@
 #include "Arduino.h"
 
 #include "board.h"
-
-#define BTN_DOWN_LEFT (1)
-#define BTN_DOWN_RIGHT (2)
-#define BTN_DOWN_CENTRE (4)
+#include "buttons.h"
 
 #define TURN_GREEN (0)
 #define TURN_RED (1)
@@ -28,13 +25,11 @@ typedef struct Connect4Game {
   Board* winBoard;
   int pos;
   int turn;
-  int mode;
   long lockedOutUntil;
   int winnerColour;
   MoveAnimation *animations;
 } Connect4Game;
 
 Connect4Game *CreateConnect4Game();
-void Connect4Game_processMove(Connect4Game *thiz, long timeMs);
-void Connect4Game_loop(Connect4Game *thiz, long timeMs);
+void Connect4Game_loop(Connect4Game *thiz, long timeMs, ButtonStates *states);
 
