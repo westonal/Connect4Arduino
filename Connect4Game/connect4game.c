@@ -100,6 +100,12 @@ void Connect4Game_loop(Connect4Game *thiz, long timeMs, ButtonStates *states) {
         resetGame(thiz);
         thiz->lockedOutUntil = timeMs + MOVES_MUST_BE_APART_BY_MS;
       }
+    } else {
+      //no winner, ai?
+      if (thiz->turn == TURN_RED) {
+        int m = aiChooseMove(thiz);
+        playMove(thiz, m, millis());
+      }
     }
   }
 }
@@ -183,9 +189,11 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
   int y = getAvailableYPosition(thiz->both, move1x);
   if (y == -1) return 0;
 
+  drawDisplay();
+
   mark(playersBoard, move1x, y);
   mark(both, move1x, y);
-  int win = checkWin(playersBoard, thiz->winBoard);
+  int win = checkWin(playersBoard, 0);
   if (win) {
     result = 1;
   } else if (n > 1) {
@@ -205,8 +213,9 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
 
 int aiChooseMove(Connect4Game * thiz) {
   int moves[CONNECT4_WIDTH];
-  for (int x = 0; x < CONNECT4_WIDTH; x++)
+  for (int x = 0; x < CONNECT4_WIDTH; x++) {
     moves[x] = aiTestMoveSequence(thiz, x, 2);
+  }
 
   int bestMove = -1000;
   int n = 0;

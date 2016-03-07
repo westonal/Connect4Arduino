@@ -20,6 +20,7 @@ int pos(Board *board, int x, int y) {
 }
 
 void mark(Board *board, int x, int y) {
+  if (!board) return;
   int idx = IDX(x, y);
   int a = idx % 16;
   int b = idx / 16;
@@ -33,8 +34,7 @@ void unmark(Board *board, int x, int y) {
   int a = idx % 16;
   int b = idx / 16;
   unsigned int block = board->_pos[b];
-  block = block & ~(1
-  << a);
+  block = block & ~(1 << a);
   board->_pos[b] = block;
 }
 
