@@ -35,7 +35,7 @@ int readSingleButton(ButtonState *state, long timeMs, ButtonStates *states, int 
   return result;
 }
 
-int readButtons(ButtonStates * states, long timeMs) {
+int readButtons(ButtonStates *states, long timeMs) {
   int result = 0;
   result |= readSingleButton(&states->left, timeMs, states, BTN_DOWN_LEFT, input_left);
   result |= readSingleButton(&states->right, timeMs, states, BTN_DOWN_RIGHT, input_right);
