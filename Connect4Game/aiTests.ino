@@ -1,33 +1,21 @@
 #include <ArduinoUnit.h>
 #include "connect4game.h"
 
+int givenMovesMakeAiChoice(char *moves) {
+  Connect4Game *theGame = CreateConnect4Game();
+  applyMoves(theGame, moves);
+  int aiChoice = aiChooseMove(theGame);
+  DisposeGame(theGame);
+  return aiChoice;
+}
+
 test(ai_simple_win)
 {
-  Connect4Game *theGame = CreateConnect4Game();
-  playMove(theGame, 0, 0);
-  playMove(theGame, 0, 0);
-  playMove(theGame, 1, 0);
-  playMove(theGame, 1, 0);
-  playMove(theGame, 2, 0);
-  playMove(theGame, 2, 0);
-  int aiChoice = aiChooseMove(theGame);
-  assertEqual(4, aiChoice);
-  free(theGame);
+  assertEqual(3, givenMovesMakeAiChoice("001122"));
 }
 
 test(ai_simple_win_2)
 {
-  Connect4Game *theGame = CreateConnect4Game();
-  playMove(theGame, 0, 0);
-  playMove(theGame, 0, 0);
-  playMove(theGame, 1, 0);
-  playMove(theGame, 1, 0);
-  playMove(theGame, 3, 0);
-  playMove(theGame, 3, 0);
-  playMove(theGame, 4, 0);
-  playMove(theGame, 4, 0);
-  int aiChoice = aiChooseMove(theGame);
-  assertEqual(2, aiChoice);
-  free(theGame);
+  assertEqual(2, givenMovesMakeAiChoice("00113344"));
 }
 

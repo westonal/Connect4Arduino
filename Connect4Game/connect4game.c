@@ -3,13 +3,27 @@
 #include "display.h"
 
 Connect4Game *CreateConnect4Game() {
-  //Serial.println("Created new game");
   Connect4Game *n = calloc(1, sizeof(Connect4Game));
   n->red = createBoard();
   n->green = createBoard();
   n->both = createBoard();
   n->winBoard = createBoard();
   return n;
+}
+
+void DisposeGame(Connect4Game *thiz) {
+  free(thiz->red);
+  free(thiz->green);
+  free(thiz->both);
+  free(thiz->winBoard);
+  MoveAnimation *current = thiz->animations;
+  while (current)
+  {
+    MoveAnimation *prev = current;
+    current = current->next;
+    free(prev);
+  }
+  free(thiz);
 }
 
 int getTurnColour(Connect4Game *thiz) {
@@ -169,10 +183,16 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x) {
 
 int aiChooseMove(Connect4Game * thiz) {
   for (int x = 0; x < CONNECT4_WIDTH; x++) {
-    if (aiTestMoveSequence(thiz, x)){
+    if (aiTestMoveSequence(thiz, x)) {
       return x;
     }
   }
   return -1;
+}
+
+void applyMoves(Connect4Game * thiz, char *sequence) {
+  int len = strlen(sequence);
+  for (int i = 0; i < len; i++)
+    playMove(thiz, sequence[i] - '0', 0);
 }
 
