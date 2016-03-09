@@ -19,7 +19,7 @@ int getTurnColour(Connect4Game *thiz) {
 #define PER_STEP_SPEED_MS (100)
 #define MOVES_MUST_BE_APART_BY_MS (500)
 
-void animate(Connect4Game *thiz, long timeMs) {
+void animate(Connect4Game *thiz, unsigned long timeMs) {
   MoveAnimation *animation = thiz->animations;
   while (animation) {
     long t = timeMs - animation->startTime;
@@ -55,9 +55,9 @@ void resetGame(Connect4Game *thiz) {
   thiz->winnerColour = 0;
 }
 
-void Connect4Game_processMove(Connect4Game *thiz, long timeMs, ButtonStates *states);
+void Connect4Game_processMove(Connect4Game *thiz, unsigned long timeMs, ButtonStates *states);
 
-void Connect4Game_loop(Connect4Game *thiz, long timeMs, ButtonStates *states) {
+void Connect4Game_loop(Connect4Game *thiz, unsigned long timeMs, ButtonStates *states) {
   if (timeMs > thiz->lockedOutUntil && thiz->winnerColour == 0) {
     for (int x = 0; x < 8; x++)
       display[x][0] = OFF;
@@ -106,7 +106,7 @@ void Connect4Game_addAnimation(Connect4Game *thiz, MoveAnimation *animation) {
   }
 }
 
-void Connect4Game_processMove(Connect4Game *thiz, long timeMs, ButtonStates *states) {
+void Connect4Game_processMove(Connect4Game *thiz, unsigned long timeMs, ButtonStates *states) {
   int mode = readButtons(states, timeMs);
 
   if (mode & BTN_DOWN_LEFT) {

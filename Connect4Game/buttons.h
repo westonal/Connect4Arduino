@@ -9,9 +9,9 @@
 typedef struct {
    int down;
    int newDown;
-   int downTimeMs;
+   unsigned long downTimeMs;
    int repeatCount;
-   int nextRepeatAllowedAtTime;
+   unsigned long nextRepeatAllowedAtTime;
 } ButtonState;
 
 typedef struct {
@@ -24,5 +24,5 @@ typedef struct {
 } ButtonStates;
 
 ButtonStates *CreateButtonStates();
-int readButtons(ButtonStates *states, long timeMs);
+int readButtons(ButtonStates *states, unsigned long timeMs);
 
