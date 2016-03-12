@@ -145,6 +145,12 @@ int fastCheckDiagWin(Board *board, Board *resultBoard) {
   return fastCheckDiagWinS(board, resultBoard) + fastCheckDiagWinBS(board, resultBoard);
 }
 
+int fastCheckWin(Board *board, Board *resultBoard) {
+  return fastCheckVertWin(board, resultBoard) +
+         fastCheckHozWin(board, resultBoard) +
+         fastCheckDiagWin(board, resultBoard);
+}
+
 void init_wins(WinChecker *checker) {
   p("Creating win checker");
   Board *temp = createBoard();
