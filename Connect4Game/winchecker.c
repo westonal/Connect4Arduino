@@ -88,8 +88,30 @@ int fastCheckHozWin(Board *board, Board *resultBoard) {
 }
 
 int fastCheckDiagWin(Board *board, Board *resultBoard) {
+  int column = board->lastMarkedColumn;
+  int row = board->lastMarkedRow;
+  int result = 0;
+  uint64_t data = getData(board);
+  WinChecker *checker = getWinChecker();
 
+  for (int xy = -3; xy <= 0; xy++) {
+    int testC = column + xy;
+    int testR = row + xy;
+    if (testC < 0)continue;
+    if (testR < 0)continue;
+    if (testR > CONNECT4_HEIGHT - 4)continue;
+    if (testC > CONNECT4_WIDTH - 4)continue;
 
+    uint64_t mask = checker->dMaskS;
+    mask = mask << IDX(testC, testR);
+    if ((mask & data) == mask) {
+      result++;
+      for (int i = 0; i < 4; i++)
+        mark(resultBoard, testC + i, testR + i);
+    }
+  }
+
+  return result;
 }
 
 void init_wins(WinChecker *checker) {

@@ -245,6 +245,19 @@ test(can_detect_4_diag_1)
   }
 }
 
+test(does_not_wrap_around_diagonally_1)
+{
+  Board *b = createBoard();
+  Board *resultBoard = createBoard();
+  assertEqual(0, fastCheckWin(b, resultBoard));
+  for (int xy = 0; xy < 4; xy++) {
+    mark(b, xy + 5, xy);
+    assertEqual(0, fastCheckWin(b, resultBoard));
+  }
+  free(b);
+  free(resultBoard);
+}
+
 test(can_detect_4_diag_2)
 {
   for (int x = 0; x <= (CONNECT4_WIDTH - 4); x++) {

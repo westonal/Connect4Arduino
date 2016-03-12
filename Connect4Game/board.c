@@ -109,7 +109,7 @@ int checkDiagWin(Board *board, Board *resultBoard) {
   int result = 0;
   for (int x = 0; x <= (CONNECT4_WIDTH - 4); x++)
     for (int y = 0; y <= (CONNECT4_HEIGHT - 4); y++)
-      result += checkDiagWinInSubBoxDirection1(board, resultBoard, x, y) + checkDiagWinInSubBoxDirection2(board, resultBoard, x, y);
+      result += checkDiagWinInSubBoxDirection2(board, resultBoard, x, y);
   return result;
 }
 
@@ -118,7 +118,10 @@ int checkWin(Board *board, Board *resultBoard) {
 }
 
 int fastCheckWin(Board *board, Board *resultBoard) {
-  return checkWin(board, resultBoard) + fastCheckVertWin(board, resultBoard) + fastCheckHozWin(board, resultBoard);
+  return checkWin(board, resultBoard) +
+         fastCheckVertWin(board, resultBoard) +
+         fastCheckHozWin(board, resultBoard) +
+         fastCheckDiagWin(board, resultBoard);
 }
 
 void reset(Board *board) {
