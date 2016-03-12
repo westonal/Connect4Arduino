@@ -28,9 +28,8 @@ void markData(Board *board, uint64_t data) {
     board->data = board->data | data;
 }
 
-void unmark(Board *board, int x, int y) {
-  int idx = IDX(x, y);
-  board->data = board->data & ~(((uint64_t) 1) << idx);
+void resetData(Board *board, uint64_t data) {
+  board->data = data;
 }
 
 void createCombined(Board* target, Board *b1, Board *b2) {

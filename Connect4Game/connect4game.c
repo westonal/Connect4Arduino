@@ -187,12 +187,17 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
   Board *playersBoard = getCurrentPlayersBoard(thiz);
   Board *opponentsBoard = getOtherPlayersBoard(thiz);
   Board *both = thiz->both;
+
   int result = 0;
   int y = getAvailableYPosition(thiz->both, move1x);
   if (y == -1) return 0;
 
+  uint64_t oldData = playersBoard->data;
+  uint64_t oldBothData = both->data;
+
   mark(playersBoard, move1x, y);
   mark(both, move1x, y);
+
   int win = fastCheckWinNoMarking(playersBoard);
   if (win) {
     result = 1000 * n;
@@ -206,8 +211,8 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
     }
     toggleTurn(thiz);
   }
-  unmark(both, move1x, y);
-  unmark(playersBoard, move1x, y);
+  resetData(playersBoard, oldData);
+  resetData(both, oldBothData);
   return result;
 }
 
@@ -218,7 +223,7 @@ int aiChooseMove(Connect4Game * thiz) {
     if (y == -1)
       moves[x] = -1000000;
     else
-      moves[x] = aiTestMoveSequence(thiz, x, 4);
+      moves[x] = aiTestMoveSequence(thiz, x, 5);
     p("%d: %d", x, moves[x]);
   }
 
