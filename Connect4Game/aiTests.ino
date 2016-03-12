@@ -9,19 +9,24 @@ int givenMovesMakeAiChoice(char *moves) {
   return aiChoice;
 }
 
+void assertChoice(int expected, char *moves) {
+  assertEqual(expected, givenMovesMakeAiChoice(moves));
+}
+
 test(ai_win_in_one_move_tests)
 {
-  assertEqual(3, givenMovesMakeAiChoice("001122"));
-  assertEqual(2, givenMovesMakeAiChoice("00113344"));
-  assertEqual(1, givenMovesMakeAiChoice("121212"));
+  assertChoice(3, "001122");
+  assertChoice(2, "00113344");
+  assertChoice(1, "121212");
 }
 
 test(ai_cant_win_but_must_block)
 {
   unsigned long startMs = millis();
-  assertEqual(4, givenMovesMakeAiChoice("2233555"));
+  assertChoice(4, "2233555");
   unsigned long endMs = millis();
   Serial.print("AI took ");
   Serial.print(endMs - startMs);
   Serial.println("ms");
 }
+
