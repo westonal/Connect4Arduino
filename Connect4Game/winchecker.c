@@ -29,19 +29,24 @@ uint64_t createHozWinMask(Board *temp) {
 }
 
 int fastCheckVertWin(Board *board, Board *resultBoard) {
+  int row = board->lastMarkedRow;
+  if (row < 3)return 0;
+
   int column = board->lastMarkedColumn;
+
   WinChecker *checker = getWinChecker();
   int result = 0;
   uint64_t data = getData(board);
-  for (int y = 0; y < CONNECT4_HEIGHT - 3; y++) {
-    uint64_t mask = checker->vMask;
-    mask = mask << IDX(column, y);
-    if ((mask & data) == mask) {
-      result++;
-      for (int i = 0; i < 4; i++)
-        mark(resultBoard, column, i + y);
-    }
+  uint64_t mask = checker->vMask;
+
+  mask = mask << IDX(column, row - 3);
+
+  if ((mask & data) == mask) {
+    result++;
+    for (int i = 0; i < 4; i++)
+      mark(resultBoard, column, i + row - 3);
   }
+
   return result;
 }
 
