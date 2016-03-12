@@ -42,13 +42,12 @@ uint64_t createDiagWinMaskBS(Board *temp) {
   return getData(temp);
 }
 
-int fastCheckVertWin(Board *board, Board *resultBoard) {
+int fastCheckVertWin(WinChecker *checker, Board *board, Board *resultBoard) {
   int row = board->lastMarkedRow;
   if (row < 3)return 0;
 
   int column = board->lastMarkedColumn;
 
-  WinChecker *checker = getWinChecker();
   int result = 0;
   uint64_t data = getData(board);
   uint64_t mask = checker->vMask;
@@ -64,11 +63,10 @@ int fastCheckVertWin(Board *board, Board *resultBoard) {
   return result;
 }
 
-int fastCheckHozWin(Board *board, Board *resultBoard) {
+int fastCheckHozWin(WinChecker *checker, Board *board, Board *resultBoard) {
   int column = board->lastMarkedColumn;
   int row = board->lastMarkedRow;
 
-  WinChecker *checker = getWinChecker();
   int result = 0;
   uint64_t data = getData(board);
   for (int x = column - 3; x <= column; x++) {
@@ -87,12 +85,11 @@ int fastCheckHozWin(Board *board, Board *resultBoard) {
   return result;
 }
 
-int fastCheckDiagWinS(Board *board, Board *resultBoard) {
+int fastCheckDiagWinS(WinChecker *checker, Board *board, Board *resultBoard) {
   int column = board->lastMarkedColumn;
   int row = board->lastMarkedRow;
   int result = 0;
   uint64_t data = getData(board);
-  WinChecker *checker = getWinChecker();
 
   for (int xy = -3; xy <= 0; xy++) {
     int testC = column + xy;
@@ -114,12 +111,11 @@ int fastCheckDiagWinS(Board *board, Board *resultBoard) {
   return result;
 }
 
-int fastCheckDiagWinBS(Board *board, Board *resultBoard) {
+int fastCheckDiagWinBS(WinChecker *checker, Board *board, Board *resultBoard) {
   int column = board->lastMarkedColumn;
   int row = board->lastMarkedRow;
   int result = 0;
   uint64_t data = getData(board);
-  WinChecker *checker = getWinChecker();
 
   for (int xy = -3; xy <= 0; xy++) {
     int testC = column + xy;
@@ -141,14 +137,13 @@ int fastCheckDiagWinBS(Board *board, Board *resultBoard) {
   return result;
 }
 
-int fastCheckDiagWin(Board *board, Board *resultBoard) {
-  return fastCheckDiagWinS(board, resultBoard) + fastCheckDiagWinBS(board, resultBoard);
-}
-
 int fastCheckWin(Board *board, Board *resultBoard) {
-  return fastCheckVertWin(board, resultBoard) +
-         fastCheckHozWin(board, resultBoard) +
-         fastCheckDiagWin(board, resultBoard);
+  WinChecker *checker = getWinChecker();
+  
+  return fastCheckVertWin(checker, board, resultBoard) +
+         fastCheckHozWin(checker, board, resultBoard) +
+         fastCheckDiagWinS(checker, board, resultBoard) +
+         fastCheckDiagWinBS(checker, board, resultBoard);
 }
 
 void init_wins(WinChecker *checker) {
