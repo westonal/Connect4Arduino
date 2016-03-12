@@ -18,28 +18,28 @@ uint64_t createVertWinMask(Board *temp) {
   reset(temp);
   for (int y = 0; y < 4; y++)
     mark(temp, 0, y);
-  return getData(temp);
+  return temp->data;
 }
 
 uint64_t createHozWinMask(Board *temp) {
   reset(temp);
   for (int x = 0; x < 4; x++)
     mark(temp, x, 0);
-  return getData(temp);
+  return temp->data;
 }
 
 uint64_t createDiagWinMaskS(Board *temp) {
   reset(temp);
   for (int xy = 0; xy < 4; xy++)
     mark(temp, xy, xy);
-  return getData(temp);
+  return temp->data;
 }
 
 uint64_t createDiagWinMaskBS(Board *temp) {
   reset(temp);
   for (int xy = 0; xy < 4; xy++)
     mark(temp, xy, 3 - xy);
-  return getData(temp);
+  return temp->data;
 }
 
 int fastCheckVertWin(WinChecker *checker, Board *board, Board *resultBoard) {
@@ -49,7 +49,7 @@ int fastCheckVertWin(WinChecker *checker, Board *board, Board *resultBoard) {
   int column = board->lastMarkedColumn;
 
   int result = 0;
-  uint64_t data = getData(board);
+  uint64_t data = board->data;
   uint64_t mask = checker->vMask;
 
   mask = mask << IDX(column, row - 3);
@@ -67,7 +67,7 @@ int fastCheckHozWin(WinChecker *checker, Board *board, Board *resultBoard) {
   int row = board->lastMarkedRow;
 
   int result = 0;
-  uint64_t data = getData(board);
+  uint64_t data = board->data;
   for (int x = column - 3; x <= column; x++) {
     if (x < 0)continue;
     if (x > CONNECT4_WIDTH - 4)continue;
@@ -87,7 +87,7 @@ int fastCheckDiagWinS(WinChecker *checker, Board *board, Board *resultBoard) {
   int column = board->lastMarkedColumn;
   int row = board->lastMarkedRow;
   int result = 0;
-  uint64_t data = getData(board);
+  uint64_t data = board->data;
 
   for (int xy = -3; xy <= 0; xy++) {
     int testC = column + xy;
@@ -112,7 +112,7 @@ int fastCheckDiagWinBS(WinChecker *checker, Board *board, Board *resultBoard) {
   int column = board->lastMarkedColumn;
   int row = board->lastMarkedRow;
   int result = 0;
-  uint64_t data = getData(board);
+  uint64_t data = board->data;
 
   for (int xy = -3; xy <= 0; xy++) {
     int testC = column + xy;

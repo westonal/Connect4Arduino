@@ -9,7 +9,7 @@
 typedef struct Board {
   int width;
   int height;
-  uint64_t _p;
+  uint64_t data;
   int lastMarkedColumn;
   int lastMarkedRow;
 } Board;
@@ -25,5 +25,4 @@ void reset(Board *board);
 
 void markData(Board *board, uint64_t data);
 
-uint64_t getData(Board *board);
 
