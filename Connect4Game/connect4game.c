@@ -157,7 +157,7 @@ void playMove(Connect4Game * thiz, int x, unsigned long timeMs) {
     animation->startTime = timeMs;
     Connect4Game_addAnimation(thiz, animation);
     createCombined(thiz->both, thiz->red, thiz->green);
-    if (fastCheckWin(playersBoard, thiz->winBoard, x)) {
+    if (fastCheckWin(playersBoard, thiz->winBoard)) {
       thiz->winnerColour = turnColour;
     }
     toggleTurn(thiz);
@@ -193,7 +193,7 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
 
   mark(playersBoard, move1x, y);
   mark(both, move1x, y);
-  int win = fastCheckWin(playersBoard, 0, move1x);
+  int win = fastCheckWin(playersBoard, 0);
   if (win) {
     result = 1;
   } else if (n > 1) {

@@ -153,14 +153,14 @@ test(can_detect_4_horizontally)
     for (int x = 0; x <= (CONNECT4_WIDTH - 4); x++) {
       Board *b = createBoard();
       Board *resultBoard = createBoard();
-      assertEqual(0, fastCheckWin(b, resultBoard, x));
+      assertEqual(0, fastCheckWin(b, resultBoard));
       mark(b, x, y);
       mark(b, x + 1, y);
       mark(b, x + 2, y);
-      assertEqual(0, fastCheckWin(b, resultBoard, x + 2));
+      assertEqual(0, fastCheckWin(b, resultBoard));
       assertIsEmpty(resultBoard);
       mark(b, x + 3, y);
-      assertEqual(1, fastCheckWin(b, resultBoard, x + 3));
+      assertEqual(1, fastCheckWin(b, resultBoard));
       for (int c = x; c < x + 4; c++) {
         assertEqual(1, pos(resultBoard, c, y));
       }
@@ -177,14 +177,14 @@ test(can_detect_4_vertically)
     for (int y = 0; y <= (CONNECT4_HEIGHT - 4); y++) {
       Board *b = createBoard();
       Board *resultBoard = createBoard();
-      assertEqual(0, fastCheckWin(b, resultBoard, x));
+      assertEqual(0, fastCheckWin(b, resultBoard));
       mark(b, x, y);
       mark(b, x, y + 1);
       mark(b, x, y + 2);
-      assertEqual(0, fastCheckWin(b, resultBoard, x));
+      assertEqual(0, fastCheckWin(b, resultBoard));
       assertIsEmpty(resultBoard);
       mark(b, x, y + 3);
-      assertEqual(1, fastCheckWin(b, resultBoard, x));
+      assertEqual(1, fastCheckWin(b, resultBoard));
       for (int c = y; c < y + 4; c++) {
         assertEqual(1, pos(resultBoard, x, c));
       }
@@ -201,14 +201,14 @@ test(can_detect_4_diag_1)
     for (int y = 0; y <= (CONNECT4_HEIGHT - 4); y++) {
       Board *b = createBoard();
       Board *resultBoard = createBoard();
-      assertEqual(0, fastCheckWin(b, resultBoard, x));
+      assertEqual(0, fastCheckWin(b, resultBoard));
       mark(b, x, y);
       mark(b, x + 1, y + 1);
       mark(b, x + 2, y + 2);
-      assertEqual(0, fastCheckWin(b, resultBoard, x + 2));
+      assertEqual(0, fastCheckWin(b, resultBoard));
       assertIsEmpty(resultBoard);
       mark(b, x + 3, y + 3);
-      assertEqual(1, fastCheckWin(b, resultBoard, x + 3));
+      assertEqual(1, fastCheckWin(b, resultBoard));
       for (int c = 0; c < 4; c++) {
         assertEqual(1, pos(resultBoard, x + c, y + c));
       }
@@ -225,14 +225,14 @@ test(can_detect_4_diag_2)
     for (int y = 0; y <= (CONNECT4_HEIGHT - 4); y++) {
       Board *b = createBoard();
       Board *resultBoard = createBoard();
-      assertEqual(0, fastCheckWin(b, resultBoard, x));
+      assertEqual(0, fastCheckWin(b, resultBoard));
       mark(b, x + 3, y);
       mark(b, x + 2, y + 1);
       mark(b, x + 1, y + 2);
-      assertEqual(0, fastCheckWin(b, resultBoard, x + 1));
+      assertEqual(0, fastCheckWin(b, resultBoard));
       assertIsEmpty(resultBoard);
       mark(b, x, y + 3);
-      assertEqual(1, fastCheckWin(b, resultBoard, x));
+      assertEqual(1, fastCheckWin(b, resultBoard));
       for (int c = 0; c < 4; c++) {
         assertEqual(1, pos(resultBoard, x + (3 - c), y + c));
       }

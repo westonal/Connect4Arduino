@@ -19,6 +19,8 @@ void mark(Board *board, int x, int y) {
   if (!board) return;
   int idx = IDX(x, y);
   board->_p = board->_p | (((uint64_t) 1) << idx);
+  board->lastMarkedColumn = x;
+  board->lastMarkedRow = y;
 }
 
 void unmark(Board *board, int x, int y) {
@@ -112,11 +114,11 @@ int checkDiagWin(Board *board, Board *resultBoard) {
 }
 
 int checkWin(Board *board, Board *resultBoard) {
-  return checkHozWin(board, resultBoard) + checkDiagWin(board, resultBoard);
+  return checkDiagWin(board, resultBoard);
 }
 
-int fastCheckWin(Board *board, Board *resultBoard, int columnJustPlayed) {
-  return checkWin(board, resultBoard) + fastCheckVertWin(board, resultBoard, columnJustPlayed);
+int fastCheckWin(Board *board, Board *resultBoard) {
+  return checkWin(board, resultBoard) + fastCheckVertWin(board, resultBoard) + fastCheckHozWin(board, resultBoard);
 }
 
 void reset(Board *board) {

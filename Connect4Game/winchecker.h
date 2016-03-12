@@ -7,9 +7,11 @@ typedef struct {
   int boardDataCapacity;
   int boardDataSize;
   uint64_t vMask;
+  uint64_t hMask;
 } WinChecker;
 
 WinChecker *getWinChecker();
 
-int fastCheckVertWin(Board *board, Board *resultBoard, int column);
+int fastCheckVertWin(Board *board, Board *resultBoard);
+int fastCheckHozWin(Board *board, Board *resultBoard);
 

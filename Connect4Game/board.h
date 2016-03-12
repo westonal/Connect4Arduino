@@ -10,6 +10,8 @@ typedef struct Board {
   int width;
   int height;
   uint64_t _p;
+  int lastMarkedColumn;
+  int lastMarkedRow;
 } Board;
 
 Board *createBoard();
@@ -19,7 +21,7 @@ void mark(Board *board, int x, int y);
 void unmark(Board *board, int x, int y);
 void createCombined(Board* target, Board *b1, Board *b2);
 void draw(Board *board, int colour);
-int fastCheckWin(Board *board, Board *resultBoard, int columnJustPlayed);
+int fastCheckWin(Board *board, Board *resultBoard);
 void reset(Board *board);
 
 uint64_t getData(Board *board);
