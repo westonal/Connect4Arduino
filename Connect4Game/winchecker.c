@@ -87,7 +87,7 @@ int fastCheckHozWin(Board *board, Board *resultBoard) {
   return result;
 }
 
-int fastCheckDiagWin(Board *board, Board *resultBoard) {
+int fastCheckDiagWinS(Board *board, Board *resultBoard) {
   int column = board->lastMarkedColumn;
   int row = board->lastMarkedRow;
   int result = 0;
@@ -112,6 +112,37 @@ int fastCheckDiagWin(Board *board, Board *resultBoard) {
   }
 
   return result;
+}
+
+int fastCheckDiagWinBS(Board *board, Board *resultBoard) {
+  int column = board->lastMarkedColumn;
+  int row = board->lastMarkedRow;
+  int result = 0;
+  uint64_t data = getData(board);
+  WinChecker *checker = getWinChecker();
+
+  for (int xy = -3; xy <= 0; xy++) {
+    int testC = column + xy;
+    int testR = row + xy - 3;
+    if (testC < 0)continue;
+    if (testR < 0)continue;
+    if (testR > CONNECT4_HEIGHT - 4)continue;
+    if (testC > CONNECT4_WIDTH - 4)continue;
+
+    uint64_t mask = checker->dMaskBS;
+    mask = mask << IDX(testC, testR);
+
+    if ((mask & data) == mask) {
+      result++;
+      markData(resultBoard, mask);
+    }
+  }
+
+  return result;
+}
+
+int fastCheckDiagWin(Board *board, Board *resultBoard) {
+  return fastCheckDiagWinS(board, resultBoard) + fastCheckDiagWinBS(board, resultBoard);
 }
 
 void init_wins(WinChecker *checker) {
