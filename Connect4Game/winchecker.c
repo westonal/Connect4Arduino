@@ -146,10 +146,10 @@ int fastCheckWin(Board *board, Board *resultBoard) {
 int fastCheckWinNoMarking(Board *board) {
   WinChecker *checker = getWinChecker();
 
-  return (fastCheckVertWin(checker, board, 0) ||
-          fastCheckHozWin(checker, board, 0) ||
-          fastCheckDiagWinS(checker, board, 0) ||
-          fastCheckDiagWinBS(checker, board, 0)) ? 1 : 0;
+  return fastCheckVertWin(checker, board, 0) +
+         fastCheckHozWin(checker, board, 0) +
+         fastCheckDiagWinS(checker, board, 0) +
+         fastCheckDiagWinBS(checker, board, 0);
 }
 
 void init_wins(WinChecker *checker) {

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "connect4game.h"
 #include "display.h"
+#include "debug.h"
 
 Connect4Game *CreateConnect4Game() {
   Connect4Game *n = calloc(1, sizeof(Connect4Game));
@@ -102,10 +103,10 @@ void Connect4Game_loop(Connect4Game *thiz, unsigned long timeMs, ButtonStates *s
       }
     } else {
       //no winner, ai?
-      if (thiz->turn == TURN_RED) {
-        int m = aiChooseMove(thiz);
-        playMove(thiz, m, millis());
-      }
+//      if (thiz->turn == TURN_RED) {
+//        int m = aiChooseMove(thiz);
+//        playMove(thiz, m, millis());
+//      }
     }
   }
 }
@@ -193,13 +194,13 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
   mark(both, move1x, y);
   int win = fastCheckWinNoMarking(playersBoard);
   if (win) {
-    result = 1;
-  } else if (n > 1) {
+    result = 1000 * n;
+  } else if (n > 2) {
     toggleTurn(thiz);
     for (int opponentX = 0; opponentX < CONNECT4_WIDTH; opponentX++) {
       int opponentMoveQuality = aiTestMoveSequence(thiz, opponentX, n - 1);
       if (opponentMoveQuality > 0) {
-        result = -1;
+        result = -1 * n;
       }
     }
     toggleTurn(thiz);
@@ -212,7 +213,8 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
 int aiChooseMove(Connect4Game * thiz) {
   int moves[CONNECT4_WIDTH];
   for (int x = 0; x < CONNECT4_WIDTH; x++) {
-    moves[x] = aiTestMoveSequence(thiz, x, 3);
+    moves[x] = aiTestMoveSequence(thiz, x, 4);
+    p("%d: %d", x, moves[x]);
   }
 
   int bestMove = -1000;
@@ -230,4 +232,5 @@ void applyMoves(Connect4Game * thiz, char *sequence) {
   for (int i = 0; i < len; i++)
     playMove(thiz, sequence[i] - '0', 0);
 }
+
 

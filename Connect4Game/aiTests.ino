@@ -13,6 +13,7 @@ test(ai_win_in_one_move_tests)
 {
   assertEqual(3, givenMovesMakeAiChoice("001122"));
   assertEqual(2, givenMovesMakeAiChoice("00113344"));
+  assertEqual(1, givenMovesMakeAiChoice("121212"));
 }
 
 test(ai_cant_win_but_must_block)

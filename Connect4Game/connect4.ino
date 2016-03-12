@@ -2,6 +2,8 @@
 
 #include <ArduinoUnit.h>
 
+/*
+
 test(board_width_and_height_as_expected)
 {
   Board *b = createBoard();
@@ -281,4 +283,5 @@ test(can_detect_4_diag_2)
     }
   }
 }
+*/
 
