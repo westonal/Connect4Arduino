@@ -15,4 +15,5 @@ typedef struct {
 WinChecker *getWinChecker();
 
 int fastCheckWin(Board *board, Board *resultBoard);
+int fastCheckWinNoMarking(Board *board);
 

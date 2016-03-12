@@ -193,7 +193,7 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
 
   mark(playersBoard, move1x, y);
   mark(both, move1x, y);
-  int win = fastCheckWin(playersBoard, 0);
+  int win = fastCheckWinNoMarking(playersBoard);
   if (win) {
     result = 1;
   } else if (n > 1) {

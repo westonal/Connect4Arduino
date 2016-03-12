@@ -143,6 +143,15 @@ int fastCheckWin(Board *board, Board *resultBoard) {
          fastCheckDiagWinBS(checker, board, resultBoard);
 }
 
+int fastCheckWinNoMarking(Board *board) {
+  WinChecker *checker = getWinChecker();
+
+  return (fastCheckVertWin(checker, board, 0) ||
+          fastCheckHozWin(checker, board, 0) ||
+          fastCheckDiagWinS(checker, board, 0) ||
+          fastCheckDiagWinBS(checker, board, 0)) ? 1 : 0;
+}
+
 void init_wins(WinChecker *checker) {
   p("Creating win checker");
   Board *temp = createBoard();

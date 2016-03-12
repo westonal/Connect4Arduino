@@ -24,7 +24,8 @@ void mark(Board *board, int x, int y) {
 }
 
 void markData(Board *board, uint64_t data) {
-  board->data = board->data | data;
+  if (board)
+    board->data = board->data | data;
 }
 
 void unmark(Board *board, int x, int y) {
