@@ -22,11 +22,6 @@ test(ai_win_in_one_move_tests)
 
 test(ai_cant_win_but_must_block)
 {
-  unsigned long startMs = millis();
   assertChoice(4, "2233555");
-  unsigned long endMs = millis();
-  Serial.print("AI took ");
-  Serial.print(endMs - startMs);
-  Serial.println("ms");
 }
 

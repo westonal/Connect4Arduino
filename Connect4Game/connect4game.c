@@ -211,15 +211,18 @@ int aiScoreMove(Board *playersBoard, Board *opponentsBoard, Board *both, int thi
 
 #define MINSCORE (1<<((sizeof(int)*8)-1)) //-2^15
 
+#define LOOK_AHEAD (3)
+
 long aiGetBestMoveAndScore(Board *playersBoard, Board *opponentsBoard, Board *both, int movesToLookAhead) {
   int moves[CONNECT4_WIDTH];
+
   for (int x = 0; x < CONNECT4_WIDTH; x++) {
     int y = getAvailableYPosition(both, x);
     if (y == -1)
       moves[x] = MINSCORE;
     else
       moves[x] = aiScoreMove(playersBoard, opponentsBoard, both, x, movesToLookAhead);
-    if (movesToLookAhead == 3)
+    if (movesToLookAhead == LOOK_AHEAD)
       p("%d: %d", x, moves[x]);
   }
 
@@ -234,7 +237,16 @@ long aiGetBestMoveAndScore(Board *playersBoard, Board *opponentsBoard, Board *bo
 }
 
 int aiChooseMove(Connect4Game * thiz) {
-  return aiGetBestMoveAndScore(getCurrentPlayersBoard(thiz), getOtherPlayersBoard(thiz), thiz->both, 3) & 0xFF;
+  p("AI thinking, depth %d", LOOK_AHEAD);
+  int startMs = millis();
+  long moveAndScore = aiGetBestMoveAndScore(getCurrentPlayersBoard(thiz), getOtherPlayersBoard(thiz), thiz->both, LOOK_AHEAD);
+  int m = moveAndScore & 0xFF;
+  int score = moveAndScore >> 16;
+  int endMs = millis();
+  p("AI took %d ms", endMs - startMs);
+  if (score < 0)
+    p("AI thinks is has lost");
+  return m;
 }
 
 void applyMoves(Connect4Game * thiz, char *sequence) {
