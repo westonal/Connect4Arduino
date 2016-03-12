@@ -6,6 +6,7 @@ extern "C" {
 #include "pins.h"
 #include "buttons.h"
 #include "clock.h"
+#include "debug.h"
 }
 
 int inputs[] = {input_left, input_centre, input_right};

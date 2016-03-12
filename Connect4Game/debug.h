@@ -1,0 +1,3 @@
+
+void p(char *fmt, ...);
+
