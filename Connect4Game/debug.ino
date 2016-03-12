@@ -20,3 +20,21 @@ void print64(uint64_t s4, char *id) {
   p("%s: [%s]", id, string);
 }
 
+void printBoard(uint64_t boardData, char *id) {
+  char string[8][9];
+  int idx = 0;
+  while (idx < 64) {
+    int x = idx % 8;
+    int y = idx / 8;
+    string[x][y] = (boardData & 1) ? '1' : '0';
+    boardData >>= 1;
+    idx++;
+  }
+  p("%s\n[", id);
+  for (int row = 6; row >= 0; row--) {
+    string[row][8] = 0;
+    p("%d:  %s", row, string[row]);
+  }
+  p("]", id);
+}
+
