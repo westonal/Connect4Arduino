@@ -171,6 +171,32 @@ test(can_detect_4_horizontally)
   }
 }
 
+test(wont_wrap_around_horizontal_wins)
+{
+  Board *b = createBoard();
+  Board *resultBoard = createBoard();
+
+  mark(b, 0, 0);
+  mark(b, 1, 0);
+  mark(b, 2, 0);
+  assertEqual(0, fastCheckWin(b, resultBoard));
+
+  mark(b, 0, 1);
+  mark(b, 1, 1);
+  mark(b, 2, 1);
+  assertEqual(0, fastCheckWin(b, resultBoard));
+
+  mark(b, 7, 0);
+  assertEqual(0, fastCheckWin(b, resultBoard));
+  mark(b, 7, 1);
+  assertEqual(0, fastCheckWin(b, resultBoard));
+  mark(b, 7, 2);
+  assertEqual(0, fastCheckWin(b, resultBoard));
+
+  free(b);
+  free(resultBoard);
+}
+
 test(can_detect_4_vertically)
 {
   for (int x = 0; x < CONNECT4_WIDTH; x++) {

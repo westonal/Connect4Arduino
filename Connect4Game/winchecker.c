@@ -54,6 +54,7 @@ int fastCheckHozWin(Board *board, Board *resultBoard) {
   uint64_t data = getData(board);
   for (int x = column - 3; x <= column; x++) {
     if (x < 0)continue;
+    if (x > CONNECT4_WIDTH - 4)continue;
 
     uint64_t mask = checker->hMask;
     mask = mask << IDX(x, row);
