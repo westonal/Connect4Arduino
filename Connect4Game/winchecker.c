@@ -56,8 +56,7 @@ int fastCheckVertWin(WinChecker *checker, Board *board, Board *resultBoard) {
 
   if ((mask & data) == mask) {
     result++;
-    for (int i = 0; i < 4; i++)
-      mark(resultBoard, column, i + row - 3);
+    markData(resultBoard, mask);
   }
 
   return result;
@@ -78,8 +77,7 @@ int fastCheckHozWin(WinChecker *checker, Board *board, Board *resultBoard) {
 
     if ((mask & data) == mask) {
       result++;
-      for (int i = 0; i < 4; i++)
-        mark(resultBoard, i + x, row);
+      markData(resultBoard, mask);
     }
   }
   return result;
@@ -103,8 +101,7 @@ int fastCheckDiagWinS(WinChecker *checker, Board *board, Board *resultBoard) {
     mask = mask << IDX(testC, testR);
     if ((mask & data) == mask) {
       result++;
-      for (int i = 0; i < 4; i++)
-        mark(resultBoard, testC + i, testR + i);
+      markData(resultBoard, mask);
     }
   }
 
@@ -139,7 +136,7 @@ int fastCheckDiagWinBS(WinChecker *checker, Board *board, Board *resultBoard) {
 
 int fastCheckWin(Board *board, Board *resultBoard) {
   WinChecker *checker = getWinChecker();
-  
+
   return fastCheckVertWin(checker, board, resultBoard) +
          fastCheckHozWin(checker, board, resultBoard) +
          fastCheckDiagWinS(checker, board, resultBoard) +
