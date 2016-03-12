@@ -9,3 +9,14 @@ void p(char *fmt, ...) {
   Serial.println(buf);
 }
 
+void print64(uint64_t s4, char *id) {
+  char string[65];
+  int idx = 63;
+  while (idx >= 0) {
+    string[idx--] = (s4 & 1) ? '1' : '0';
+    s4 >>= 1;
+  }
+  string[64] = 0;
+  p("%s: [%s]", id, string);
+}
+
