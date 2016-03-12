@@ -212,7 +212,7 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
 int aiChooseMove(Connect4Game * thiz) {
   int moves[CONNECT4_WIDTH];
   for (int x = 0; x < CONNECT4_WIDTH; x++) {
-    moves[x] = aiTestMoveSequence(thiz, x, 2);
+    moves[x] = aiTestMoveSequence(thiz, x, 3);
   }
 
   int bestMove = -1000;
