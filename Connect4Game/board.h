@@ -20,3 +20,5 @@ void draw(Board *board, int colour);
 int checkWin(Board *board, Board *resultBoard);
 void reset(Board *board);
 
+uint64_t getData(Board *board);
+

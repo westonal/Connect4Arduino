@@ -120,3 +120,7 @@ void reset(Board *board) {
   board->_p = 0;
 }
 
+uint64_t getData(Board *board) {
+  return board->_p;
+}
+
