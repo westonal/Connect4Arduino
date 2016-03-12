@@ -40,7 +40,7 @@ void createCombined(Board* target, Board *b1, Board *b2) {
 void draw(Board *board, int colour) {
   for (int y = 0; y < CONNECT4_HEIGHT; y++)
     for (int x = 0; x < CONNECT4_WIDTH; x++)
-      if (pos(board, x, y)) display[x][y + 1] = colour;
+      if (pos(board, x, y)) display[x][7 - y] = colour;
 }
 
 void reset(Board *board) {

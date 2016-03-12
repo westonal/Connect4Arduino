@@ -37,15 +37,16 @@ int getTurnColour(Connect4Game *thiz) {
 void animate(Connect4Game *thiz, unsigned long timeMs) {
   MoveAnimation *animation = thiz->animations;
   while (animation) {
+    int targetY = 7 - animation->targetY;
     long t = timeMs - animation->startTime;
     int progress = t / PER_STEP_SPEED_MS;
-    int y = progress;
-    if (y > animation->targetY) {
-      y = animation->targetY;
+    int y = progress + 1;
+    if (y > targetY) {
+      y = targetY;
       animation->complete = 1;
     }
-    display[animation->x][animation->targetY + 1] = OFF;
-    display[animation->x][y + 1] = animation->colour;
+    display[animation->x][targetY] = OFF;
+    display[animation->x][y] = animation->colour;
     animation = animation->next;
   }
 }
@@ -103,10 +104,10 @@ void Connect4Game_loop(Connect4Game *thiz, unsigned long timeMs, ButtonStates *s
       }
     } else {
       //no winner, ai?
-//      if (thiz->turn == TURN_RED) {
-//        int m = aiChooseMove(thiz);
-//        playMove(thiz, m, millis());
-//      }
+      //      if (thiz->turn == TURN_RED) {
+      //        int m = aiChooseMove(thiz);
+      //        playMove(thiz, m, millis());
+      //      }
     }
   }
 }
@@ -136,7 +137,7 @@ Board *getOtherPlayersBoard(Connect4Game *thiz) {
 }
 
 int getAvailableYPosition(Board *both, int x) {
-  for (int y = CONNECT4_HEIGHT - 1; y >= 0; y--)
+  for (int y = 0; y < CONNECT4_HEIGHT; y++)
     if (!pos(both, x, y)) return y;
   return -1;
 }
