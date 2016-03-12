@@ -112,7 +112,5 @@ void loop() {
 
   //call often
   drawDisplay();
-  //sync before display changes to prevent tearing
-  syncDisplay();
 }
 

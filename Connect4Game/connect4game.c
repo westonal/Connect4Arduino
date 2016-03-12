@@ -190,6 +190,8 @@ int aiScoreMove(Board *playersBoard, Board *opponentsBoard, Board *both, int thi
   int y = getAvailableYPosition(both, thisMoveColumn);
   if (y == -1) return 0;
 
+  drawDisplay();
+
   uint64_t oldData = playersBoard->data;
   uint64_t oldBothData = both->data;
 
@@ -211,17 +213,23 @@ int aiScoreMove(Board *playersBoard, Board *opponentsBoard, Board *both, int thi
 
 #define MINSCORE (1<<((sizeof(int)*8)-1)) //-2^15
 
-#define LOOK_AHEAD (3)
+#define LOOK_AHEAD (4)
 
 long aiGetBestMoveAndScore(Board *playersBoard, Board *opponentsBoard, Board *both, int movesToLookAhead) {
   int moves[CONNECT4_WIDTH];
 
   for (int x = 0; x < CONNECT4_WIDTH; x++) {
+    if (movesToLookAhead == LOOK_AHEAD) {
+      p("%d: %d", x, moves[x]);
+      display[x][0] = ORANGE;
+    }
+
     int y = getAvailableYPosition(both, x);
     if (y == -1)
       moves[x] = MINSCORE;
     else
       moves[x] = aiScoreMove(playersBoard, opponentsBoard, both, x, movesToLookAhead);
+
     if (movesToLookAhead == LOOK_AHEAD)
       p("%d: %d", x, moves[x]);
   }
@@ -243,9 +251,9 @@ int aiChooseMove(Connect4Game * thiz) {
   int m = moveAndScore & 0xFF;
   int score = moveAndScore >> 16;
   int endMs = millis();
-  p("AI took %d ms", endMs - startMs);
+  p("AI took %d ms, move %d", endMs - startMs, m);
   if (score < 0)
-    p("AI thinks is has lost");
+    p("AI thinks it has lost");
   return m;
 }
 
