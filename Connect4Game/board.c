@@ -23,6 +23,10 @@ void mark(Board *board, int x, int y) {
   board->lastMarkedRow = y;
 }
 
+void markData(Board *board, uint64_t data) {
+  board->_p = board->_p | data;
+}
+
 void unmark(Board *board, int x, int y) {
   int idx = IDX(x, y);
   board->_p = board->_p & ~(((uint64_t) 1) << idx);

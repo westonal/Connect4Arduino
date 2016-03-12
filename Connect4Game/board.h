@@ -24,5 +24,7 @@ void draw(Board *board, int colour);
 int fastCheckWin(Board *board, Board *resultBoard);
 void reset(Board *board);
 
+void markData(Board *board, uint64_t data);
+
 uint64_t getData(Board *board);
 
