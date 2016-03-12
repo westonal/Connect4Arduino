@@ -7,6 +7,8 @@ extern "C" {
 #include "buttons.h"
 #include "clock.h"
 #include "debug.h"
+#include "winchecker.h"
+#include "board.h"
 }
 
 int inputs[] = {input_left, input_centre, input_right};
