@@ -216,18 +216,20 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
   return result;
 }
 
+#define MINSCORE (1<<((sizeof(int)*8)-1)) //-2^15
+
 int aiChooseMove(Connect4Game * thiz) {
   int moves[CONNECT4_WIDTH];
   for (int x = 0; x < CONNECT4_WIDTH; x++) {
     int y = getAvailableYPosition(thiz->both, x);
     if (y == -1)
-      moves[x] = -1000000;
+      moves[x] = MINSCORE;
     else
       moves[x] = aiTestMoveSequence(thiz, x, 5);
     p("%d: %d", x, moves[x]);
   }
 
-  int bestMove = -1000;
+  int bestMove = MINSCORE;
   int n = 0;
   for (int x = 0; x < CONNECT4_WIDTH; x++)
     if (moves[x] > bestMove) {
