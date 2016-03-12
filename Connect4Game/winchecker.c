@@ -28,6 +28,20 @@ uint64_t createHozWinMask(Board *temp) {
   return getData(temp);
 }
 
+uint64_t createDiagWinMaskS(Board *temp) {
+  reset(temp);
+  for (int xy = 0; xy < 4; xy++)
+    mark(temp, xy, xy);
+  return getData(temp);
+}
+
+uint64_t createDiagWinMaskBS(Board *temp) {
+  reset(temp);
+  for (int xy = 0; xy < 4; xy++)
+    mark(temp, xy, 3 - xy);
+  return getData(temp);
+}
+
 int fastCheckVertWin(Board *board, Board *resultBoard) {
   int row = board->lastMarkedRow;
   if (row < 3)return 0;
@@ -73,13 +87,22 @@ int fastCheckHozWin(Board *board, Board *resultBoard) {
   return result;
 }
 
+int fastCheckDiagWin(Board *board, Board *resultBoard) {
+
+
+}
+
 void init_wins(WinChecker *checker) {
   p("Creating win checker");
   Board *temp = createBoard();
   checker->vMask = createVertWinMask(temp);
   checker->hMask = createHozWinMask(temp);
-  print64(checker->vMask, "vmask");
-  print64(checker->hMask, "hmask");
+  checker->dMaskS = createDiagWinMaskS(temp);
+  checker->dMaskBS = createDiagWinMaskBS(temp);
+  printBoard(checker->vMask, "vmask");
+  printBoard(checker->hMask, "hmask");
+  printBoard(checker->dMaskS, "dmaskS");
+  printBoard(checker->dMaskBS, "dmaskBS");
   free(temp);
 }
 
