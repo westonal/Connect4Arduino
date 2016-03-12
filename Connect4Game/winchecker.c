@@ -114,8 +114,8 @@ int fastCheckDiagWinBS(WinChecker *checker, Board *board, Board *resultBoard) {
   int result = 0;
   uint64_t data = board->data;
 
-  for (int xy = -3; xy <= 0; xy++) {
-    int testC = column + xy;
+  for (int xy = 0; xy < 4; xy++) {
+    int testC = column - xy;
     int testR = row + xy - 3;
     if (testC < 0)continue;
     if (testR < 0)continue;
@@ -124,7 +124,6 @@ int fastCheckDiagWinBS(WinChecker *checker, Board *board, Board *resultBoard) {
 
     uint64_t mask = checker->dMaskBS;
     mask = mask << IDX(testC, testR);
-
     if ((mask & data) == mask) {
       result++;
       markData(resultBoard, mask);

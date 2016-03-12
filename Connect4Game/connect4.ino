@@ -4,18 +4,27 @@
 
 #define MOVE(x,y) (((x)<<4)|y)
 
+void assertWin(Board *b, Board *resultBoard, int expected) {
+  int win = fastCheckWin(b, resultBoard);
+  if (expected != win) {
+    p("Test failed expected %s", win ? "win" : "loss");
+    printBoard(b->data, "Player board");
+  }
+  assertEqual(expected, win);
+}
+
 void playMoveAssertNotWin(Board *b, Board *resultBoard, int m) {
   int x = m >> 4;
   int y = m & 0xF;
   mark(b, x, y);
-  assertEqual(0, fastCheckWin(b, resultBoard));
+  assertWin(b, resultBoard, 0);
 }
 
 void playMoveAssertWin(Board *b, Board *resultBoard, int m) {
   int x = m >> 4;
   int y = m & 0xF;
   mark(b, x, y);
-  assertEqual(1, fastCheckWin(b, resultBoard));
+  assertWin(b, resultBoard, 1);
 }
 
 void assertMoveSet(Board *resultBoard, int m) {
@@ -39,13 +48,24 @@ void assertLastMoveWin(int move1, int move2, int move3, int move4) {
   free(b);
 }
 
+void assertNoWin(int move1, int move2, int move3, int move4) {
+  Board *b = createBoard();
+  Board *resultBoard = createBoard();
+  playMoveAssertNotWin(b, resultBoard, move1);
+  playMoveAssertNotWin(b, resultBoard, move2);
+  playMoveAssertNotWin(b, resultBoard, move3);
+  playMoveAssertNotWin(b, resultBoard, move4);
+  free(resultBoard);
+  free(b);
+}
+
 void assertLastMoveWinAnyOrder(int move1, int move2, int move3, int move4) {
   assertLastMoveWin(move1, move2, move3, move4);
-  //  assertLastMoveWin(move4, move3, move2, move1);
-  //  assertLastMoveWin(move1, move3, move2, move4);
-  //  assertLastMoveWin(move4, move3, move2, move1);
-  //  assertLastMoveWin(move4, move3, move1, move2);
-  //  assertLastMoveWin(move1, move2, move4, move3);
+  assertLastMoveWin(move4, move3, move2, move1);
+  assertLastMoveWin(move1, move3, move2, move4);
+  assertLastMoveWin(move4, move3, move2, move1);
+  assertLastMoveWin(move4, move3, move1, move2);
+  assertLastMoveWin(move1, move2, move4, move3);
 }
 
 test(board_width_and_height_as_expected)
@@ -249,19 +269,6 @@ test(can_detect_4_diag_1)
                                 MOVE(x + 3, y + 3));
 }
 
-test(does_not_wrap_around_diagonally_1)
-{
-  Board *b = createBoard();
-  Board *resultBoard = createBoard();
-  assertEqual(0, fastCheckWin(b, resultBoard));
-  for (int xy = 0; xy < 4; xy++) {
-    mark(b, xy + 5, xy);
-    assertEqual(0, fastCheckWin(b, resultBoard));
-  }
-  free(b);
-  free(resultBoard);
-}
-
 test(can_detect_4_diag_2)
 {
   for (int x = 0; x < CONNECT4_WIDTH - 3; x++)
@@ -272,27 +279,19 @@ test(can_detect_4_diag_2)
                                 MOVE(x, y + 3));
 }
 
-test(can_detect_4_diag_2_filled_in_middle)
+test(does_not_wrap_around_diagonally_1)
 {
-  for (int x = 0; x <= (CONNECT4_WIDTH - 4); x++) {
-    for (int y = 0; y <= (CONNECT4_HEIGHT - 4); y++) {
-      Board *b = createBoard();
-      Board *resultBoard = createBoard();
-      assertEqual(0, fastCheckWin(b, resultBoard));
-      mark(b, x + 3, y);
-      mark(b, x + 2, y + 1);
-      mark(b, x, y + 3);
-      assertEqual(0, fastCheckWin(b, resultBoard));
-      assertIsEmpty(resultBoard);
-      mark(b, x + 1, y + 2);
-      assertEqual(1, fastCheckWin(b, resultBoard));
-      for (int c = 0; c < 4; c++) {
-        assertEqual(1, pos(resultBoard, x + (3 - c), y + c));
-      }
-      assertEqual(4, countOnBoard(resultBoard));
-      free(b);
-      free(resultBoard);
-    }
-  }
+  assertNoWin(MOVE(5, 0),
+              MOVE(6, 1),
+              MOVE(7, 2),
+              MOVE(0, 3));
+}
+
+test(does_not_wrap_around_diagonally_2)
+{
+  assertNoWin(MOVE(5, 3),
+              MOVE(6, 2),
+              MOVE(7, 1),
+              MOVE(0, 0));
 }
 
