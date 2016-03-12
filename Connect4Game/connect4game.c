@@ -2,16 +2,12 @@
 #include "connect4game.h"
 #include "display.h"
 
-WinChecker *winChecker;
-
 Connect4Game *CreateConnect4Game() {
   Connect4Game *n = calloc(1, sizeof(Connect4Game));
   n->red = createBoard();
   n->green = createBoard();
   n->both = createBoard();
   n->winBoard = createBoard();
-  //if (!winChecker)
-  //  winChecker = createWinChecker();
   return n;
 }
 
@@ -161,7 +157,7 @@ void playMove(Connect4Game * thiz, int x, unsigned long timeMs) {
     animation->startTime = timeMs;
     Connect4Game_addAnimation(thiz, animation);
     createCombined(thiz->both, thiz->red, thiz->green);
-    if (checkWin(playersBoard, thiz->winBoard)) {
+    if (fastCheckWin(playersBoard, thiz->winBoard, x)) {
       thiz->winnerColour = turnColour;
     }
     toggleTurn(thiz);
@@ -197,7 +193,7 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
 
   mark(playersBoard, move1x, y);
   mark(both, move1x, y);
-  int win = checkWin(playersBoard, 0);
+  int win = fastCheckWin(playersBoard, 0, move1x);
   if (win) {
     result = 1;
   } else if (n > 1) {
@@ -218,7 +214,7 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
 int aiChooseMove(Connect4Game * thiz) {
   int moves[CONNECT4_WIDTH];
   for (int x = 0; x < CONNECT4_WIDTH; x++) {
-    moves[x] = aiTestMoveSequence(thiz, x, 1);
+    moves[x] = aiTestMoveSequence(thiz, x, 2);
   }
 
   int bestMove = -1000;

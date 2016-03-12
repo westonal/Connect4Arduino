@@ -1,8 +1,7 @@
 #include <stdlib.h>
 #include "board.h"
 #include "display.h"
-
-#define IDX(x,y) ((y)*CONNECT4_WIDTH+(x))
+#include "winchecker.h"
 
 Board *createBoard() {
   Board *n = calloc(1, sizeof(Board));
@@ -114,6 +113,10 @@ int checkDiagWin(Board *board, Board *resultBoard) {
 
 int checkWin(Board *board, Board *resultBoard) {
   return checkHozWin(board, resultBoard) + checkVertWin(board, resultBoard) + checkDiagWin(board, resultBoard);
+}
+
+int fastCheckWin(Board *board, Board *resultBoard, int columnJustPlayed) {
+  return checkWin(board, resultBoard);
 }
 
 void reset(Board *board) {

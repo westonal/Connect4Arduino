@@ -4,7 +4,6 @@
 
 #include "board.h"
 #include "buttons.h"
-#include "winchecker.h"
 
 #define TURN_GREEN (0)
 #define TURN_RED (1)

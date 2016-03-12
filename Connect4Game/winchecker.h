@@ -6,7 +6,8 @@ typedef struct {
   uint64_t *boardData;
   int boardDataCapacity;
   int boardDataSize;
+  uint64_t vMask;
 } WinChecker;
 
-WinChecker *createWinChecker();
+WinChecker *getWinChecker();
 
