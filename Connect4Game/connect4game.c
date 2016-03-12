@@ -2,12 +2,16 @@
 #include "connect4game.h"
 #include "display.h"
 
+WinChecker *winChecker;
+
 Connect4Game *CreateConnect4Game() {
   Connect4Game *n = calloc(1, sizeof(Connect4Game));
   n->red = createBoard();
   n->green = createBoard();
   n->both = createBoard();
   n->winBoard = createBoard();
+  //if (!winChecker)
+  //  winChecker = createWinChecker();
   return n;
 }
 
@@ -214,7 +218,7 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
 int aiChooseMove(Connect4Game * thiz) {
   int moves[CONNECT4_WIDTH];
   for (int x = 0; x < CONNECT4_WIDTH; x++) {
-    moves[x] = aiTestMoveSequence(thiz, x, 2);
+    moves[x] = aiTestMoveSequence(thiz, x, 1);
   }
 
   int bestMove = -1000;
