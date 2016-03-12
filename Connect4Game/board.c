@@ -13,34 +13,23 @@ Board *createBoard() {
 
 int pos(Board *board, int x, int y) {
   int idx = IDX(x, y);
-  int a = idx % 16;
-  int b = idx / 16;
-  unsigned int block = board->_pos[b];
-  return ((block >> a) & 1) == 1;
+  return ((board->_p >> idx) & 1) == 1;
 }
 
 void mark(Board *board, int x, int y) {
   if (!board) return;
   int idx = IDX(x, y);
-  int a = idx % 16;
-  int b = idx / 16;
-  unsigned int block = board->_pos[b];
-  block = block | (1 << a);
-  board->_pos[b] = block;
+  board->_p = board->_p | (((uint64_t) 1) << idx);
 }
 
 void unmark(Board *board, int x, int y) {
   int idx = IDX(x, y);
-  int a = idx % 16;
-  int b = idx / 16;
-  unsigned int block = board->_pos[b];
-  block = block & ~(1 << a);
-  board->_pos[b] = block;
+  board->_p = board->_p & ~(((uint64_t) 1) << idx);
 }
 
 void createCombined(Board* target, Board *b1, Board *b2) {
   for (int i = 0; i < 4; i++)
-    target->_pos[i] = b1->_pos[i] | b2->_pos[i];
+    target->_p = b1->_p | b2->_p;
 }
 
 void draw(Board *board, int colour) {
@@ -128,8 +117,6 @@ int checkWin(Board *board, Board *resultBoard) {
 }
 
 void reset(Board *board) {
-  for (int i = 0; i < 4; i++) {
-    board->_pos[i] = 0;
-  }
+  board->_p = 0;
 }
 

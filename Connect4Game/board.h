@@ -1,4 +1,5 @@
 #pragma once
+#include "Arduino.h"
 
 #define CONNECT4_WIDTH (8)
 #define CONNECT4_HEIGHT (7)
@@ -6,7 +7,7 @@
 typedef struct Board {
   int width;
   int height;
-  unsigned int _pos[4];
+  uint64_t _p;
 } Board;
 
 Board *createBoard();
