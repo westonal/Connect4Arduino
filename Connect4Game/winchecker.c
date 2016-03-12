@@ -21,7 +21,8 @@ uint64_t createVertWinMask(Board *temp) {
   return getData(temp);
 }
 
-int fastCheckVertWin(WinChecker *checker, Board *board, Board *resultBoard, int column) {
+int fastCheckVertWin(Board *board, Board *resultBoard, int column) {
+  WinChecker *checker = getWinChecker();
   int result = 0;
   uint64_t data = getData(board);
   for (int y = 0; y < CONNECT4_HEIGHT - 3; y++) {

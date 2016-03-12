@@ -11,3 +11,5 @@ typedef struct {
 
 WinChecker *getWinChecker();
 
+int fastCheckVertWin(Board *board, Board *resultBoard, int column);
+

@@ -112,11 +112,11 @@ int checkDiagWin(Board *board, Board *resultBoard) {
 }
 
 int checkWin(Board *board, Board *resultBoard) {
-  return checkHozWin(board, resultBoard) + checkVertWin(board, resultBoard) + checkDiagWin(board, resultBoard);
+  return checkHozWin(board, resultBoard) + checkDiagWin(board, resultBoard);
 }
 
 int fastCheckWin(Board *board, Board *resultBoard, int columnJustPlayed) {
-  return checkWin(board, resultBoard);
+  return checkWin(board, resultBoard) + fastCheckVertWin(board, resultBoard, columnJustPlayed);
 }
 
 void reset(Board *board) {
