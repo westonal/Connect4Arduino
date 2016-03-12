@@ -189,8 +189,6 @@ int aiTestMoveSequence(Connect4Game * thiz, int move1x, int n) {
   int y = getAvailableYPosition(thiz->both, move1x);
   if (y == -1) return 0;
 
-  drawDisplay();
-
   mark(playersBoard, move1x, y);
   mark(both, move1x, y);
   int win = fastCheckWinNoMarking(playersBoard);
