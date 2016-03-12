@@ -89,9 +89,9 @@ int fastCheckDiagWinS(WinChecker *checker, Board *board, Board *resultBoard) {
   int result = 0;
   uint64_t data = board->data;
 
-  for (int xy = -3; xy <= 0; xy++) {
-    int testC = column + xy;
-    int testR = row + xy;
+  for (int xy = 0; xy < 4; xy++) {
+    int testC = column - xy;
+    int testR = row - xy;
     if (testC < 0)continue;
     if (testR < 0)continue;
     if (testR > CONNECT4_HEIGHT - 4)continue;
