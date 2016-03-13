@@ -10,6 +10,7 @@ Connect4Game *CreateConnect4Game() {
   n->green = createBoard();
   n->both = createBoard();
   n->winBoard = createBoard();
+  n->pos = 3;
   return n;
 }
 
