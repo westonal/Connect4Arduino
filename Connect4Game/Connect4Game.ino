@@ -110,27 +110,27 @@ void animateConnect4(unsigned long timeMs) {
   int tx = -frame + 8;
   setTranslate(tx, 0);
 
-  //C red: (w4)
-  drawBmp(168890638LL, 0LL, 0, 1);
+  //C red: (w3)
+  drawBmp(1118478LL, 0LL, 0, 1);
 
   //O green: (w4)
-  drawBmp(0LL, 235999502LL, 5, 1);
+  drawBmp(0LL, 235999502LL, 3, 1);
 
   //N red/green: (w4)
-  drawBmp(520881695LL, 0LL, 10, 1);
-  drawBmp(0LL, 520881695LL, 15, 1);
+  drawBmp(520881695LL, 0LL, 7, 1);
+  drawBmp(0LL, 520881695LL, 11, 1);
 
   //E red: (w3 / 5)
-  drawBmp(1381663LL, 0LL, 20, 1);
+  drawBmp(1381663LL, 0LL, 15, 1);
 
-  //C green: (w4)
-  drawBmp(0LL, 168890638LL, 24, 1);
+  //C green: (w3)
+  drawBmp(0LL, 1118478LL, 18, 1);
 
   //T red: (3 / 5)
-  drawBmp(73473LL, 0LL, 29, 1);
+  drawBmp(73473LL, 0LL, 21, 1);
 
   //4 green/orange flashing: (4/6)
-  drawBmp(WINFLASH(timeMs) ? 272109854LL : 0LL, 272109854LL, max(33, 2 - tx), 0);
+  drawBmp(WINFLASH(timeMs) ? 272109854LL : 0LL, 272109854LL, max(24, 2 - tx), 0);
 }
 
 void loop() {
