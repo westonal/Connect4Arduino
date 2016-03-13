@@ -10,6 +10,7 @@ Connect4Game *CreateConnect4Game() {
   n->green = createBoard();
   n->both = createBoard();
   n->winBoard = createBoard();
+  n->pos = INITAL_CURSOR_POS;
   return n;
 }
 
@@ -66,7 +67,7 @@ void resetGame(Connect4Game *thiz) {
   reset(thiz->green);
   reset(thiz->both);
   reset(thiz->winBoard);
-  thiz->pos = 0;
+  thiz->pos = INITAL_CURSOR_POS;
   thiz->turn = 0;
   thiz->lockedOutUntil = 0;
   thiz->winnerColour = 0;
@@ -91,7 +92,7 @@ void Connect4Game_loop(Connect4Game *thiz, unsigned long timeMs, ButtonStates *s
 
   if (!thiz->animations) {
     if (thiz->winnerColour) {
-      if (timeMs % 600 > 400) {
+      if (WINFLASH(timeMs)) {
         draw(thiz->winBoard, ORANGE);
       }
       int i = (timeMs / 100) % 7;

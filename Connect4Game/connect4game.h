@@ -8,6 +8,8 @@
 #define TURN_GREEN (0)
 #define TURN_RED (1)
 
+#define WINFLASH(timeMs) ((timeMs) % 600 > 400)
+
 typedef struct MoveAnimation {
   long startTime;
   int x;
