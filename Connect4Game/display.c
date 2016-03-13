@@ -96,11 +96,11 @@ void drawBmp(uint64_t red, uint64_t green, byte x, byte y) {
   int xt = x + transX;
   int yt = y + transY;
 
-  if (xt > 7)return;
-  if (yt > 7)return;
+  if (xt > 7) return;
+  if (yt > 7) return;
 
-  if (xt < -7)return;
-  if (yt < -7)return;
+  if (xt < -7) return;
+  if (yt < -7) return;
 
   int shift = 8 * xt + yt;
 
