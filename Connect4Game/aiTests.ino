@@ -39,4 +39,9 @@ test(ai_must_prevent_trap)
   assertChoice(2, "304");
 }
 
+test(ai_first_moves)
+{
+  assertChoice(3, "");
+}
+
 #endif

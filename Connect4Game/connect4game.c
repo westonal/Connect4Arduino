@@ -214,32 +214,33 @@ int aiScoreMove(Board *playersBoard, Board *opponentsBoard, Board *both, int thi
 
 #define MINSCORE (1<<((sizeof(int)*8)-1)) //-2^15
 
-long aiGetBestMoveAndScore(Board *playersBoard, Board *opponentsBoard, Board *both, int movesToLookAhead) {
-  int moves[CONNECT4_WIDTH];
+int movePreferenceOrder[CONNECT4_WIDTH] = {3, 4, 2, 5, 1, 6, 0, 7};
 
-  for (int x = 0; x < CONNECT4_WIDTH; x++) {
+long aiGetBestMoveAndScore(Board *playersBoard, Board *opponentsBoard, Board *both, int movesToLookAhead) {
+  int bestMoveScore = MINSCORE;
+  int bestMovePos = movePreferenceOrder[0];
+
+  for (int i = 0; i < CONNECT4_WIDTH; i++) {
+    int x = movePreferenceOrder[i];
     if (movesToLookAhead == AI_LOOK_AHEAD) {
       display[x][0] = ORANGE;
     }
 
     int y = getAvailableYPosition(both, x);
-    if (y == -1)
-      moves[x] = MINSCORE;
-    else
-      moves[x] = aiScoreMove(playersBoard, opponentsBoard, both, x, movesToLookAhead);
+    if (y == -1) continue;
+
+    int score = aiScoreMove(playersBoard, opponentsBoard, both, x, movesToLookAhead);
 
     if (AI_OUTPUT && (movesToLookAhead == AI_LOOK_AHEAD))
-      p("%d: %d", x, moves[x]);
+      p("%d: %d", x, score);
+
+    if (score > bestMoveScore) {
+      bestMoveScore = score;
+      bestMovePos = x;
+    }
   }
 
-  int bestMove = MINSCORE;
-  int n = 0;
-  for (int x = 0; x < CONNECT4_WIDTH; x++)
-    if (moves[x] > bestMove) {
-      bestMove = moves[x];
-      n = x;
-    }
-  return n | (((long)bestMove) << 16);
+  return bestMovePos | (((long)bestMoveScore) << 16);
 }
 
 int aiChooseMove(Connect4Game * thiz) {
