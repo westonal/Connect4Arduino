@@ -42,10 +42,10 @@ uint64_t createDiagWinMaskBS(Board *temp) {
 }
 
 int fastCheckVertWin(WinChecker *checker, Board *board, Board *resultBoard) {
-  int row = board->lastMarkedRow;
+  int row = board->lastMove.row;
   if (row < 3)return 0;
 
-  int column = board->lastMarkedColumn;
+  int column = board->lastMove.column;
 
   int result = 0;
   uint64_t data = board->data;
@@ -62,8 +62,8 @@ int fastCheckVertWin(WinChecker *checker, Board *board, Board *resultBoard) {
 }
 
 int fastCheckHozWin(WinChecker *checker, Board *board, Board *resultBoard) {
-  int column = board->lastMarkedColumn;
-  int row = board->lastMarkedRow;
+  int column = board->lastMove.column;
+  int row = board->lastMove.row;
 
   int result = 0;
   uint64_t data = board->data;
@@ -83,8 +83,8 @@ int fastCheckHozWin(WinChecker *checker, Board *board, Board *resultBoard) {
 }
 
 int fastCheckDiagWinS(WinChecker *checker, Board *board, Board *resultBoard) {
-  int column = board->lastMarkedColumn;
-  int row = board->lastMarkedRow;
+  int column = board->lastMove.column;
+  int row = board->lastMove.row;
   int result = 0;
   uint64_t data = board->data;
 
@@ -108,8 +108,8 @@ int fastCheckDiagWinS(WinChecker *checker, Board *board, Board *resultBoard) {
 }
 
 int fastCheckDiagWinBS(WinChecker *checker, Board *board, Board *resultBoard) {
-  int column = board->lastMarkedColumn;
-  int row = board->lastMarkedRow;
+  int column = board->lastMove.column;
+  int row = board->lastMove.row;
   int result = 0;
   uint64_t data = board->data;
 

@@ -6,10 +6,14 @@
 
 #define IDX(x,y) ((y)*CONNECT4_WIDTH+(x))
 
+typedef struct {
+  byte row;
+  byte column;
+} Move;
+
 typedef struct Board {
   uint64_t data;
-  int lastMarkedColumn;
-  int lastMarkedRow;
+  Move lastMove;
 } Board;
 
 Board *createBoard();

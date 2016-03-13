@@ -17,8 +17,8 @@ void mark(Board *board, int x, int y) {
   if (!board) return;
   int idx = IDX(x, y);
   board->data = board->data | (((uint64_t) 1) << idx);
-  board->lastMarkedColumn = x;
-  board->lastMarkedRow = y;
+  board->lastMove.row = y;
+  board->lastMove.column = x;
 }
 
 void markData(Board *board, uint64_t data) {
