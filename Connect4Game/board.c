@@ -5,8 +5,6 @@
 
 Board *createBoard() {
   Board *n = calloc(1, sizeof(Board));
-  n->width = CONNECT4_WIDTH;
-  n->height = CONNECT4_HEIGHT;
   return n;
 }
 

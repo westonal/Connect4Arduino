@@ -7,8 +7,6 @@
 #define IDX(x,y) ((y)*CONNECT4_WIDTH+(x))
 
 typedef struct Board {
-  int width;
-  int height;
   uint64_t data;
   int lastMarkedColumn;
   int lastMarkedRow;

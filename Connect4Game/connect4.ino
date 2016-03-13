@@ -70,18 +70,10 @@ void assertLastMoveWinAnyOrder(int move1, int move2, int move3, int move4) {
   assertLastMoveWin(move1, move2, move4, move3);
 }
 
-test(board_width_and_height_as_expected)
-{
-  Board *b = createBoard();
-  assertEqual(8, b->width);
-  assertEqual(7, b->height);
-  free(b);
-}
-
 int countOnBoard(Board *b) {
   int result = 0;
-  for (int y = 0; y < b->height; y++)
-    for (int x = 0; x < b->width; x++)
+  for (int y = 0; y < CONNECT4_HEIGHT; y++)
+    for (int x = 0; x < CONNECT4_WIDTH; x++)
       if (pos(b, x, y))
         result++;
   return result;
@@ -123,8 +115,8 @@ test(can_mark_two_and_read_back_single)
 test(can_mark_each_and_read_back)
 {
   Board *b = createBoard();
-  for (int y = 0; y < b->height; y++)
-    for (int x = 0; x < b->width; x++)
+  for (int y = 0; y < CONNECT4_HEIGHT; y++)
+    for (int x = 0; x < CONNECT4_WIDTH; x++)
     {
       int temp = pos(b, x, y);
       assertEqual(0, pos(b, x, y));
