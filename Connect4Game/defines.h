@@ -1,4 +1,5 @@
 
+#define AI_ON (1)
 
 #define AI_LOOK_AHEAD (4)
 #define AI_OUTPUT (1)

@@ -76,10 +76,14 @@ void resetGame(Connect4Game *thiz) {
 void Connect4Game_processMove(Connect4Game *thiz, unsigned long timeMs, ButtonStates *states);
 
 void Connect4Game_loop(Connect4Game *thiz, unsigned long timeMs, ButtonStates *states) {
+  int isAIMove = AI_ON && thiz->turn == TURN_RED;
+  
   if (timeMs > thiz->lockedOutUntil && thiz->winnerColour == 0) {
     for (int x = 0; x < 8; x++)
       displayPixel(x, 0, OFF);
-    displayPixel(thiz->pos, 0, getTurnColour(thiz));
+
+    if (!isAIMove)
+      displayPixel(thiz->pos, 0, getTurnColour(thiz));
 
     Connect4Game_processMove(thiz, timeMs, states);
   }
@@ -106,7 +110,7 @@ void Connect4Game_loop(Connect4Game *thiz, unsigned long timeMs, ButtonStates *s
       }
     } else {
       // no winner, ai?
-      if (thiz->turn == TURN_RED) {
+      if (isAIMove) {
         int m = aiChooseMove(thiz);
         playMove(thiz, m, millis());
       }
