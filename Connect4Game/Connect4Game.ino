@@ -80,7 +80,6 @@ void digitalClockLoop() {
   int mode = readButtons(states, millis());
 
   if (mode & DOWN_LEFT) {
-    Serial.println("New left press");
     moveLocation = (moveLocation + 7) % 8;
     setTime((hour() + 1 % 24), minute(), second(), day(), month(), year());
     digitalClockDisplay();
@@ -88,7 +87,6 @@ void digitalClockLoop() {
   }
 
   if (mode & DOWN_RIGHT) {
-    Serial.println("New right press");
     moveLocation = (moveLocation + 1) % 8;
     setTime(hour(), (minute() + 1) % 60, second(), day(), month(), year());
     digitalClockDisplay();
@@ -96,7 +94,6 @@ void digitalClockLoop() {
   }
 
   if (mode & DOWN_CENTRE) {
-    Serial.println("New centre press");
     setTime(hour(), minute(), 0, day(), month(), year());
   }
 

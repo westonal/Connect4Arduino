@@ -1,5 +1,4 @@
 #include "winchecker.h"
-#include "debug.h"
 
 void init_wins(WinChecker *checker);
 
@@ -152,18 +151,11 @@ int fastCheckWinNoMarking(Board *board) {
 }
 
 void init_wins(WinChecker *checker) {
-  p("Creating win checker");
   Board *temp = createBoard();
   checker->vMask = createVertWinMask(temp);
   checker->hMask = createHozWinMask(temp);
   checker->dMaskS = createDiagWinMaskS(temp);
   checker->dMaskBS = createDiagWinMaskBS(temp);
-  printBoard(checker->vMask, "vmask");
-  printBoard(checker->hMask, "hmask");
-  printBoard(checker->dMaskS, "dmaskS");
-  printBoard(checker->dMaskBS, "dmaskBS");
   free(temp);
 }
-
-
 

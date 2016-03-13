@@ -17,7 +17,7 @@ void assertChoice(int expected, char *moves) {
   uint64_t gameData;
   int m = givenMovesMakeAiChoice(moves, &gameData);
   if (m != expected) {
-    p("Expected move (%d) missed (%d played)", expected, m);
+    p("Expect %d was %d", expected, m);
   }
   assertEqual(expected, m);
 }

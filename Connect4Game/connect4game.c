@@ -237,7 +237,7 @@ MoveScore aiGetBestMoveAndScore(Board *playersBoard, Board *opponentsBoard, Boar
     int score = aiScoreMove(playersBoard, opponentsBoard, both, x, movesToLookAhead);
 
     if (AI_OUTPUT && (movesToLookAhead == AI_LOOK_AHEAD))
-      p("%d: %d", x, score);
+      p("%d:%d", x, score);
 
     if (score > result.score) {
       result.score = score;
@@ -250,16 +250,16 @@ MoveScore aiGetBestMoveAndScore(Board *playersBoard, Board *opponentsBoard, Boar
 
 int aiChooseMove(Connect4Game * thiz) {
   if (AI_OUTPUT)
-    p("AI thinking, depth %d", AI_LOOK_AHEAD);
+    p("AI: Depth %d", AI_LOOK_AHEAD);
   int startMs = millis();
   MoveScore moveAndScore = aiGetBestMoveAndScore(getCurrentPlayersBoard(thiz), getOtherPlayersBoard(thiz), thiz->both, AI_LOOK_AHEAD);
   int m = moveAndScore.moveColumn;
   int score = moveAndScore.score;
   int endMs = millis();
   if (AI_OUTPUT) {
-    p("AI took %d ms, move %d", endMs - startMs, m);
+    p("AI: %d (%d ms)", m, endMs - startMs);
     if (score < 0)
-      p("AI thinks it has lost");
+      p("AI: lost");
   }
   return m;
 }
