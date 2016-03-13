@@ -100,7 +100,7 @@ void digitalClockLoop() {
   digitalClockDisplay();
 }
 
-#define CONNECT4_ANIM_SPEED 150
+#define CONNECT4_ANIM_SPEED 100
 
 void animateConnect4(unsigned long timeMs) {
   int frame = timeMs / CONNECT4_ANIM_SPEED;

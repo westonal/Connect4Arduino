@@ -10,7 +10,7 @@ Connect4Game *CreateConnect4Game() {
   n->green = createBoard();
   n->both = createBoard();
   n->winBoard = createBoard();
-  n->pos = 3;
+  n->pos = INITAL_CURSOR_POS;
   return n;
 }
 
@@ -67,7 +67,7 @@ void resetGame(Connect4Game *thiz) {
   reset(thiz->green);
   reset(thiz->both);
   reset(thiz->winBoard);
-  thiz->pos = 0;
+  thiz->pos = INITAL_CURSOR_POS;
   thiz->turn = 0;
   thiz->lockedOutUntil = 0;
   thiz->winnerColour = 0;
