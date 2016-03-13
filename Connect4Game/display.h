@@ -19,4 +19,7 @@ void displayPixel(byte x, byte y, byte colour);
 void displayOrPixel(byte x, byte y, byte colour);
 
 void drawFrame(uint64_t red, uint64_t green);
+void drawBmp(uint64_t red, uint64_t green, byte x, byte y);
+
+void setTranslate(int x, int y);
 

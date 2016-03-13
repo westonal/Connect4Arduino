@@ -82,6 +82,31 @@ void drawFrame(uint64_t red, uint64_t green) {
   background->greenLEDs = green;
 }
 
+int transX;
+int transY;
+
+void setTranslate(int x, int y) {
+  transX = x;
+  transY = y;
+}
+
+void drawBmp(uint64_t red, uint64_t green, byte x, byte y) {
+  Buffer *background = &buffers[1 - foregroundBuffer];
+
+  int xt = x + transX;
+  int yt = y + transY;
+
+  if (xt > 7)return;
+  if (yt > 7)return;
+
+  if (xt < 0)return;
+  if (yt < 0)return;
+
+  int shift = 8 * xt + yt;
+  background->redLEDs |= red << shift;
+  background->greenLEDs |= green << shift;
+}
+
 void clearDisplay() {
   drawFrame(0, 0);
 }
