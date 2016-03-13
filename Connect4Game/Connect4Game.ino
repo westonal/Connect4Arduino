@@ -104,6 +104,7 @@ void loop() {
 #ifdef RUN_TESTS
   tests();
 #endif
+  clearDisplay(OFF);
 
   //digitalClockLoop();
 
