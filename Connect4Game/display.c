@@ -2,31 +2,45 @@
 
 int drawColumn;
 
-byte display[8][8];
-byte greenColumns[8];
-byte redColumns[8];
+typedef struct {
+  uint64_t greenLEDs;
+  uint64_t redLEDs;
+} Buffer;
+
+byte foregroundBuffer;
+Buffer buffers[2] = {0};
 
 unsigned long nextDisplayDrawAllowed;
 
 #define FPS (100)
 #define MICROS (1000000LL / (FPS*8))
 
-void paintDisplayBuffer() {
-  for (byte x = 0; x < 8; x++) {
-    byte *green = &greenColumns[x];
-    byte *red = &redColumns[x];
-    *green = 0;
-    *red = 0;
-    for (byte y = 0; y < 8; y++) {
-      byte cell = display[x][y];
-      if (cell & GREEN) {
-        *green |= 1 << y;
-      }
-      if (cell & RED) {
-        *red |= 1 << y;
-      }
-    }
-  }
+void displayPixel(byte x, byte y, byte colour) {
+  byte idx = y + x * 8;
+  Buffer *background = &buffers[1 - foregroundBuffer];
+  uint64_t mask = 1LL << idx;
+  if (colour & GREEN)
+    background->greenLEDs |= mask;
+  else
+    background->greenLEDs &= ~mask;
+  if (colour & RED)
+    background->redLEDs |= mask;
+  else
+    background->redLEDs &= ~mask;
+}
+
+void displayOrPixel(byte x, byte y, byte colour) {
+  byte idx = y + x * 8;
+  Buffer *background = &buffers[1 - foregroundBuffer];
+  uint64_t mask = 1LL << idx;
+  if (colour & GREEN)
+    background->greenLEDs |= mask;
+  if (colour & RED)
+    background->redLEDs |= mask;
+}
+
+void backgroundToForeground() {
+  foregroundBuffer = 1 - foregroundBuffer;
 }
 
 void drawDisplay() {
@@ -39,13 +53,18 @@ void drawDisplay() {
   nextDisplayDrawAllowed = timeMicros + MICROS;
 
   if (drawColumn == 0)
-    paintDisplayBuffer();
+    backgroundToForeground();
+
+  Buffer *foreground = &buffers[foregroundBuffer];
+
+  byte green = (foreground->greenLEDs >> (drawColumn * 8)) & 0xFF;
+  byte red = (foreground->redLEDs >> (drawColumn * 8)) & 0xFF;
 
   //green
-  shiftOut(dataPin, clockPin, MSBFIRST, ~greenColumns[drawColumn]);
+  shiftOut(dataPin, clockPin, MSBFIRST, ~green);
 
   //red
-  shiftOut(dataPin, clockPin, LSBFIRST, ~redColumns[drawColumn]);
+  shiftOut(dataPin, clockPin, LSBFIRST, ~red);
 
   //column
   shiftOut(dataPin, clockPin, MSBFIRST, 1 << drawColumn);
@@ -58,9 +77,9 @@ void drawDisplay() {
 }
 
 void clearDisplay(byte colour) {
-  for (byte y = 0; y < 8; y++)
-    for (byte x = 0; x < 8; x++)
-      display[x][y] = colour;
+  Buffer *background = &buffers[1 - foregroundBuffer];
+  background->greenLEDs = 0;
+  background->redLEDs = 0;
 }
 
 void drawDelay(int milliseconds) {

@@ -46,8 +46,8 @@ void animate(Connect4Game *thiz, unsigned long timeMs) {
       y = targetY;
       animation->complete = 1;
     }
-    display[animation->x][targetY] = OFF;
-    display[animation->x][y] = animation->colour;
+    displayPixel(animation->x, targetY, OFF);
+    displayPixel(animation->x, y, animation->colour);
     animation = animation->next;
   }
 }
@@ -77,8 +77,8 @@ void Connect4Game_processMove(Connect4Game *thiz, unsigned long timeMs, ButtonSt
 void Connect4Game_loop(Connect4Game *thiz, unsigned long timeMs, ButtonStates *states) {
   if (timeMs > thiz->lockedOutUntil && thiz->winnerColour == 0) {
     for (int x = 0; x < 8; x++)
-      display[x][0] = OFF;
-    display[thiz->pos][0] = getTurnColour(thiz);
+      displayPixel(x, 0, OFF);
+    displayPixel(thiz->pos, 0, getTurnColour(thiz));
 
     Connect4Game_processMove(thiz, timeMs, states);
   }
@@ -97,7 +97,7 @@ void Connect4Game_loop(Connect4Game *thiz, unsigned long timeMs, ButtonStates *s
       int i = (timeMs / 100) % 7;
       if (i > 3) i = 6 - i;
       for (int x = i; x < 8 - i; x++)
-        display[x][0] = thiz->winnerColour;
+        displayPixel(x, 0, thiz->winnerColour);
       int mode = readButtons(states, timeMs);
       if (mode & BTN_DOWN_CENTRE) {
         resetGame(thiz);
@@ -228,7 +228,7 @@ MoveScore aiGetBestMoveAndScore(Board *playersBoard, Board *opponentsBoard, Boar
   for (int i = 0; i < CONNECT4_WIDTH; i++) {
     int x = movePreferenceOrder[i];
     if (movesToLookAhead == AI_LOOK_AHEAD) {
-      display[x][0] = ORANGE;
+      displayPixel(i, 0, ORANGE);
     }
 
     int y = getAvailableYPosition(both, x);

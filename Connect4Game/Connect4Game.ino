@@ -61,7 +61,7 @@ void digitalClockDisplay() {
   if (sec == 0) {
     for (int x = 0; x < 8; x++)
       for (int y = 5; y < 8; y++)
-        display[x][y] = GREEN;
+        displayPixel(x, y, GREEN);
   }
 
   sec += 5;
@@ -69,10 +69,10 @@ void digitalClockDisplay() {
   int s2 = (sec - 30) / 5;
   if (s1 > 6) s1 = 6;
   for (int s = 1; s <= s1; s++) {
-    display[s][6] = GREEN;
+    displayPixel(s, 6, GREEN);
   }
   for (int s = 1; s <= s2; s++) {
-    display[s][6] |= RED;
+    displayOrPixel(s, 6, RED);
   }
 }
 
