@@ -1,3 +1,4 @@
+#ifdef RUN_TESTS
 #include <ArduinoUnit.h>
 
 test(ok)
@@ -11,3 +12,4 @@ void tests(){
   Test::run();
 }
 
+#endif

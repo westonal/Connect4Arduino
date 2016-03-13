@@ -1,59 +1,101 @@
-#include "Arduino.h"
 #include "display.h"
 
 int drawColumn;
 
-int display[8][8];
-int toggle;
+typedef struct {
+  uint64_t greenLEDs;
+  uint64_t redLEDs;
+} Buffer;
+
+byte foregroundBuffer;
+Buffer buffers[2] = {0};
+
+unsigned long nextDisplayDrawAllowed;
+
+#define FPS (100)
+#define MICROS (1000000LL / (FPS*8))
+
+void displayPixel(byte x, byte y, byte colour) {
+  byte idx = y + x * 8;
+  Buffer *background = &buffers[1 - foregroundBuffer];
+  uint64_t mask = 1LL << idx;
+  if (colour & GREEN)
+    background->greenLEDs |= mask;
+  else
+    background->greenLEDs &= ~mask;
+  if (colour & RED)
+    background->redLEDs |= mask;
+  else
+    background->redLEDs &= ~mask;
+}
+
+void displayOrPixel(byte x, byte y, byte colour) {
+  byte idx = y + x * 8;
+  Buffer *background = &buffers[1 - foregroundBuffer];
+  uint64_t mask = 1LL << idx;
+  if (colour & GREEN)
+    background->greenLEDs |= mask;
+  if (colour & RED)
+    background->redLEDs |= mask;
+}
+
+void backgroundToForeground() {
+  foregroundBuffer = 1 - foregroundBuffer;
+}
 
 void drawDisplay() {
-  int x = drawColumn;  
-  int green = 0;
-  int red = 0;
+  unsigned long timeMicros = micros();
 
-  for(int y=0; y<8; y++) {
-     int cell = display[x][y];
-     if(cell&GREEN){
-       green+=1<<y;
-     }
-     if(cell&RED){
-       red+=1<<y;
-     }
+  if (timeMicros < nextDisplayDrawAllowed) {
+    return;
   }
-  
+
+  nextDisplayDrawAllowed = timeMicros + MICROS;
+
+  if (drawColumn == 0)
+    backgroundToForeground();
+
+  Buffer *foreground = &buffers[foregroundBuffer];
+
+  byte green = (foreground->greenLEDs >> (drawColumn * 8)) & 0xFF;
+  byte red = (foreground->redLEDs >> (drawColumn * 8)) & 0xFF;
+
   //green
   shiftOut(dataPin, clockPin, MSBFIRST, ~green);
-    
+
   //red
   shiftOut(dataPin, clockPin, LSBFIRST, ~red);
-    
+
   //column
-  shiftOut(dataPin, clockPin, MSBFIRST, 1<<x);
-    //take the latch pin high so the LEDs will light up:
+  shiftOut(dataPin, clockPin, MSBFIRST, 1 << drawColumn);
+  //take the latch pin high so the LEDs will light up:
   digitalWrite(latchPin, HIGH);
-  digitalWrite(latchPin, LOW);
   delayMicroseconds(100);
-  digitalWrite(13, toggle==0?HIGH:LOW);
-  toggle=(toggle+1)%2;
-  drawColumn=(drawColumn+1)%8;
+  digitalWrite(latchPin, LOW);
+
+  drawColumn = (drawColumn + 1) % 8;
 }
 
-void syncDisplay() {
-  while(drawColumn!=0){
+void clearDisplay(byte colour) {
+  Buffer *background = &buffers[1 - foregroundBuffer];
+  background->greenLEDs = 0;
+  background->redLEDs = 0;
+}
+
+void drawDelay(int milliseconds) {
+  unsigned long end = millis() + milliseconds;
+  while (millis() < end) {
     drawDisplay();
   }
 }
 
-void clearDisplay(int colour){
-  for(int y=0;y<8;y++)
-  for(int x=0;x<8;x++)
-  display[x][y]=colour;
-}
+void stopDisplay() {
+  shiftOut(dataPin, clockPin, MSBFIRST, 0);
+  shiftOut(dataPin, clockPin, MSBFIRST, 0);
+  shiftOut(dataPin, clockPin, MSBFIRST, 0);
 
-void drawDelay(int milliseconds){
-  long end = millis()+milliseconds;
-  while(millis()<end){
-    drawDisplay();
-  }
+  digitalWrite(latchPin, HIGH);
+  delayMicroseconds(100);
+  digitalWrite(latchPin, LOW);
 }
 

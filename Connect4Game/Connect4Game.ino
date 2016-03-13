@@ -1,15 +1,20 @@
 #include <TimeLib.h>
 
 extern "C" {
-  #include "connect4game.h"
-  #include "display.h"
-  #include "pins.h"
-  #include "clock.h"
+#include "connect4game.h"
+#include "display.h"
+#include "pins.h"
+#include "buttons.h"
+#include "clock.h"
+#include "debug.h"
+#include "winchecker.h"
+#include "defines.h"
 }
 
 int inputs[] = {input_left, input_centre, input_right};
 
 Connect4Game *theGame;
+ButtonStates *states;
 
 void setup() {
   Serial.begin(9600);
@@ -26,6 +31,12 @@ void setup() {
   setTime(1, 2, 0, 1, 1, 2015);
 
   theGame = CreateConnect4Game();
+  states = CreateButtonStates();
+
+  states->repeat1TimeMs = 750;
+  states->repeatNTimeMs = 200;
+
+  clearDisplay(OFF);
 }
 
 int moveLocation;
@@ -50,7 +61,7 @@ void digitalClockDisplay() {
   if (sec == 0) {
     for (int x = 0; x < 8; x++)
       for (int y = 5; y < 8; y++)
-        display[x][y] = GREEN;
+        displayPixel(x, y, GREEN);
   }
 
   sec += 5;
@@ -58,65 +69,48 @@ void digitalClockDisplay() {
   int s2 = (sec - 30) / 5;
   if (s1 > 6) s1 = 6;
   for (int s = 1; s <= s1; s++) {
-    display[s][6] = GREEN;
+    displayPixel(s, 6, GREEN);
   }
   for (int s = 1; s <= s2; s++) {
-    display[s][6] |= RED;
+    displayOrPixel(s, 6, RED);
   }
 }
 
 void digitalClockLoop() {
-  clearDisplay(OFF);
+  int mode = readButtons(states, millis());
 
-  if (digitalRead(input_left) == LOW) {
-    if ((mode & DOWN_LEFT) == 0) {
-      moveLocation = (moveLocation + 7) % 8;
-      setTime((hour() + 1 % 24), minute(), second(), day(), month(), year());
-      digitalClockDisplay();
-      drawDelay(250);
-    }
-    //mode |= DOWN_LEFT;
-  } else {
-    mode = mode & ~DOWN_LEFT;
+  if (mode & DOWN_LEFT) {
+    moveLocation = (moveLocation + 7) % 8;
+    setTime((hour() + 1 % 24), minute(), second(), day(), month(), year());
+    digitalClockDisplay();
+    drawDelay(250);
   }
 
-  if (digitalRead(input_right) == LOW) {
-    if ((mode & DOWN_RIGHT) == 0) {
-      moveLocation = (moveLocation + 1) % 8;
-      setTime(hour(), (minute() + 1) % 60, second(), day(), month(), year());
-      digitalClockDisplay();
-      drawDelay(250);
-    }
-    // mode |= DOWN_RIGHT;
-  } else {
-
-    mode = mode & ~DOWN_RIGHT;
+  if (mode & DOWN_RIGHT) {
+    moveLocation = (moveLocation + 1) % 8;
+    setTime(hour(), (minute() + 1) % 60, second(), day(), month(), year());
+    digitalClockDisplay();
+    drawDelay(250);
   }
 
-  if (digitalRead(input_centre) == LOW) {
-    moveLocation = 3;
+  if (mode & DOWN_CENTRE) {
     setTime(hour(), minute(), 0, day(), month(), year());
   }
-
-  for (int x = 0; x < 8; x++)
-    display[x][0] = OFF;
-
-  display[moveLocation][0] = ORANGE;
 
   digitalClockDisplay();
 }
 
 void loop() {
+#ifdef RUN_TESTS
   tests();
+#endif
   clearDisplay(OFF);
 
   //digitalClockLoop();
 
-  Connect4Game_loop(theGame, millis());
+  Connect4Game_loop(theGame, millis(), states);
 
   //call often
   drawDisplay();
-  //sync before display changes to prevent tearing
-  syncDisplay();
 }
 

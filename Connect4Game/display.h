@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Arduino.h"
 #include "pins.h"
 
 #define OFF 0
@@ -7,10 +8,13 @@
 #define RED 2
 #define ORANGE (GREEN | RED)
 
-extern int display[8][8];
-
 void drawDisplay();
-void syncDisplay();
 
-void clearDisplay(int colour);
+void stopDisplay();
+
+void clearDisplay(byte colour);
 void drawDelay(int milliseconds);
+
+void displayPixel(byte x, byte y, byte colour);
+void displayOrPixel(byte x, byte y, byte colour);
+

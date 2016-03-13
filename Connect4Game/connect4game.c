@@ -1,15 +1,31 @@
 #include <stdlib.h>
 #include "connect4game.h"
 #include "display.h"
+#include "debug.h"
+#include "defines.h"
 
 Connect4Game *CreateConnect4Game() {
-  //Serial.println("Created new game");
   Connect4Game *n = calloc(1, sizeof(Connect4Game));
   n->red = createBoard();
   n->green = createBoard();
   n->both = createBoard();
   n->winBoard = createBoard();
   return n;
+}
+
+void DisposeGame(Connect4Game *thiz) {
+  free(thiz->red);
+  free(thiz->green);
+  free(thiz->both);
+  free(thiz->winBoard);
+  MoveAnimation *current = thiz->animations;
+  while (current)
+  {
+    MoveAnimation *prev = current;
+    current = current->next;
+    free(prev);
+  }
+  free(thiz);
 }
 
 int getTurnColour(Connect4Game *thiz) {
@@ -19,18 +35,19 @@ int getTurnColour(Connect4Game *thiz) {
 #define PER_STEP_SPEED_MS (100)
 #define MOVES_MUST_BE_APART_BY_MS (500)
 
-void animate(Connect4Game *thiz, long timeMs) {
+void animate(Connect4Game *thiz, unsigned long timeMs) {
   MoveAnimation *animation = thiz->animations;
   while (animation) {
+    int targetY = 7 - animation->targetY;
     long t = timeMs - animation->startTime;
     int progress = t / PER_STEP_SPEED_MS;
-    int y = progress;
-    if (y > animation->targetY) {
-      y = animation->targetY;
+    int y = progress + 1;
+    if (y > targetY) {
+      y = targetY;
       animation->complete = 1;
     }
-    display[animation->x][animation->targetY + 1] = OFF;
-    display[animation->x][y + 1] = animation->colour;
+    displayPixel(animation->x, targetY, OFF);
+    displayPixel(animation->x, y, animation->colour);
     animation = animation->next;
   }
 }
@@ -51,18 +68,19 @@ void resetGame(Connect4Game *thiz) {
   reset(thiz->winBoard);
   thiz->pos = 0;
   thiz->turn = 0;
-  thiz->mode = 0;
   thiz->lockedOutUntil = 0;
   thiz->winnerColour = 0;
 }
 
-void Connect4Game_loop(Connect4Game *thiz, long timeMs) {
+void Connect4Game_processMove(Connect4Game *thiz, unsigned long timeMs, ButtonStates *states);
+
+void Connect4Game_loop(Connect4Game *thiz, unsigned long timeMs, ButtonStates *states) {
   if (timeMs > thiz->lockedOutUntil && thiz->winnerColour == 0) {
     for (int x = 0; x < 8; x++)
-      display[x][0] = OFF;
-    display[thiz->pos][0] = getTurnColour(thiz);
+      displayPixel(x, 0, OFF);
+    displayPixel(thiz->pos, 0, getTurnColour(thiz));
 
-    Connect4Game_processMove(thiz, timeMs);
+    Connect4Game_processMove(thiz, timeMs, states);
   }
 
   draw(thiz->red, RED);
@@ -79,11 +97,17 @@ void Connect4Game_loop(Connect4Game *thiz, long timeMs) {
       int i = (timeMs / 100) % 7;
       if (i > 3) i = 6 - i;
       for (int x = i; x < 8 - i; x++)
-        display[x][0] = thiz->winnerColour;
-      if (digitalRead(input_centre) == LOW) {
-        thiz->mode |= BTN_DOWN_CENTRE;
+        displayPixel(x, 0, thiz->winnerColour);
+      int mode = readButtons(states, timeMs);
+      if (mode & BTN_DOWN_CENTRE) {
         resetGame(thiz);
         thiz->lockedOutUntil = timeMs + MOVES_MUST_BE_APART_BY_MS;
+      }
+    } else {
+      // no winner, ai?
+      if (thiz->turn == TURN_RED) {
+        int m = aiChooseMove(thiz);
+        playMove(thiz, m, millis());
       }
     }
   }
@@ -105,51 +129,145 @@ void Connect4Game_addAnimation(Connect4Game *thiz, MoveAnimation *animation) {
   }
 }
 
-void Connect4Game_processMove(Connect4Game *thiz, long timeMs) {
-  if (digitalRead(input_left) == LOW) {
-    if ((thiz->mode & BTN_DOWN_LEFT) == 0) {
-      thiz->pos = (thiz->pos + (CONNECT4_WIDTH - 1)) % CONNECT4_WIDTH;
-    }
-    thiz->mode |= BTN_DOWN_LEFT;
-  } else {
-    thiz->mode = thiz->mode & ~BTN_DOWN_LEFT;
-  }
+Board *getCurrentPlayersBoard(Connect4Game *thiz) {
+  return thiz->turn == TURN_RED ? thiz->red : thiz->green;
+}
 
-  if (digitalRead(input_right) == LOW) {
-    if ((thiz->mode & BTN_DOWN_RIGHT) == 0) {
-      thiz->pos = (thiz->pos + 1) % CONNECT4_WIDTH;
-    }
-    thiz->mode |= BTN_DOWN_RIGHT;
-  } else {
-    thiz->mode = thiz->mode & ~BTN_DOWN_RIGHT;
-  }
+Board *getOtherPlayersBoard(Connect4Game *thiz) {
+  return thiz->turn == TURN_GREEN ? thiz->red : thiz->green;
+}
 
-  if (digitalRead(input_centre) == LOW) {
-    if ((thiz->mode & BTN_DOWN_CENTRE) == 0) {
-      Board *b = thiz->turn == TURN_RED ? thiz->red : thiz->green;
-      int turnColour = getTurnColour(thiz);
-      for (int y = CONNECT4_HEIGHT - 1; y >= 0; y--) {
-        if (!pos(thiz->both, thiz->pos, y)) {
-          mark(b, thiz->pos, y);
-          MoveAnimation *animation = calloc(1, sizeof(MoveAnimation));
-          animation->x = thiz->pos;
-          animation->targetY = y;
-          animation->colour = turnColour;
-          animation->startTime = timeMs;
-          Connect4Game_addAnimation(thiz, animation);
-          thiz->turn = 1 - thiz->turn;
-          thiz->lockedOutUntil = timeMs + MOVES_MUST_BE_APART_BY_MS;
-          break;
-        }
-      }
-      createCombined(thiz->both, thiz->red, thiz->green);
-      if (checkWin(b, thiz->winBoard)) {
-        thiz->winnerColour = turnColour;
-      }
+int getAvailableYPosition(Board *both, int x) {
+  for (int y = 0; y < CONNECT4_HEIGHT; y++)
+    if (!pos(both, x, y)) return y;
+  return -1;
+}
+
+void toggleTurn(Connect4Game * thiz) {
+  thiz->turn = 1 - thiz->turn;
+}
+
+void playMove(Connect4Game * thiz, int x, unsigned long timeMs) {
+  int y = getAvailableYPosition(thiz->both, x);
+  if (y != -1) {
+    Board *playersBoard = getCurrentPlayersBoard(thiz);
+    int turnColour = getTurnColour(thiz);
+    mark(playersBoard, x, y);
+    MoveAnimation *animation = calloc(1, sizeof(MoveAnimation));
+    animation->x = x;
+    animation->targetY = y;
+    animation->colour = turnColour;
+    animation->startTime = timeMs;
+    Connect4Game_addAnimation(thiz, animation);
+    createCombined(thiz->both, thiz->red, thiz->green);
+    if (fastCheckWin(playersBoard, thiz->winBoard)) {
+      thiz->winnerColour = turnColour;
     }
-    thiz->mode |= BTN_DOWN_CENTRE;
-  } else {
-    thiz->mode = thiz->mode & ~BTN_DOWN_CENTRE;
+    toggleTurn(thiz);
+    thiz->lockedOutUntil = timeMs + MOVES_MUST_BE_APART_BY_MS;
   }
 }
+
+void Connect4Game_processMove(Connect4Game * thiz, unsigned long timeMs, ButtonStates * states) {
+  int mode = readButtons(states, timeMs);
+
+  if (mode & BTN_DOWN_LEFT) {
+    thiz->pos = (thiz->pos + (CONNECT4_WIDTH - 1)) % CONNECT4_WIDTH;
+  }
+
+  if (mode & BTN_DOWN_RIGHT) {
+    thiz->pos = (thiz->pos + 1) % CONNECT4_WIDTH;
+  }
+
+  if (mode & BTN_DOWN_CENTRE) {
+    playMove(thiz, thiz->pos, timeMs);
+  }
+}
+
+typedef struct {
+  int moveColumn;
+  int score;
+} MoveScore;
+
+MoveScore aiGetBestMoveAndScore(Board *playersBoard, Board *opponentsBoard, Board *both, int movesToLookAhead);
+
+int aiScoreMove(Board *playersBoard, Board *opponentsBoard, Board *both, int thisMoveColumn, int n) {
+  int result = 0;
+  int y = getAvailableYPosition(both, thisMoveColumn);
+  if (y == -1) return 0;
+
+  drawDisplay();
+
+  uint64_t oldData = playersBoard->data;
+  uint64_t oldBothData = both->data;
+
+  mark(playersBoard, thisMoveColumn, y);
+  mark(both, thisMoveColumn, y);
+
+  int win = fastCheckWinNoMarking(playersBoard);
+  if (win) {
+    result = 1000 * (n + 1);
+  } else if (n > 1) {
+    MoveScore bestMoveAndScore = aiGetBestMoveAndScore(opponentsBoard, playersBoard, both, n - 1);
+    result = -bestMoveAndScore.score;
+  }
+  resetData(playersBoard, oldData);
+  resetData(both, oldBothData);
+  return result;
+}
+
+#define MINSCORE (1<<((sizeof(int)*8)-1)) //-2^15
+
+int movePreferenceOrder[CONNECT4_WIDTH] = {3, 4, 2, 5, 1, 6, 0, 7};
+
+MoveScore aiGetBestMoveAndScore(Board *playersBoard, Board *opponentsBoard, Board *both, int movesToLookAhead) {
+  MoveScore result;
+  result.score = MINSCORE;
+  result.moveColumn = movePreferenceOrder[0];
+
+  for (int i = 0; i < CONNECT4_WIDTH; i++) {
+    int x = movePreferenceOrder[i];
+    if (movesToLookAhead == AI_LOOK_AHEAD) {
+      displayPixel(i, 0, ORANGE);
+    }
+
+    int y = getAvailableYPosition(both, x);
+    if (y == -1) continue;
+
+    int score = aiScoreMove(playersBoard, opponentsBoard, both, x, movesToLookAhead);
+
+    if (AI_OUTPUT && (movesToLookAhead == AI_LOOK_AHEAD))
+      p("%d:%d", x, score);
+
+    if (score > result.score) {
+      result.score = score;
+      result.moveColumn = x;
+    }
+  }
+
+  return result;
+}
+
+int aiChooseMove(Connect4Game * thiz) {
+  if (AI_OUTPUT)
+    p("AI: Depth %d", AI_LOOK_AHEAD);
+  int startMs = millis();
+  MoveScore moveAndScore = aiGetBestMoveAndScore(getCurrentPlayersBoard(thiz), getOtherPlayersBoard(thiz), thiz->both, AI_LOOK_AHEAD);
+  int m = moveAndScore.moveColumn;
+  int score = moveAndScore.score;
+  int endMs = millis();
+  if (AI_OUTPUT) {
+    p("AI: %d (%d ms)", m, endMs - startMs);
+    if (score < 0)
+      p("AI: lost");
+  }
+  return m;
+}
+
+void applyMoves(Connect4Game * thiz, char *sequence) {
+  int len = strlen(sequence);
+  for (int i = 0; i < len; i++)
+    playMove(thiz, sequence[i] - '0', 0);
+}
+
 
