@@ -96,15 +96,21 @@ void drawBmp(uint64_t red, uint64_t green, byte x, byte y) {
   int xt = x + transX;
   int yt = y + transY;
 
-  if (xt > 7)return;
-  if (yt > 7)return;
+  if (xt > 7) return;
+  if (yt > 7) return;
 
-  if (xt < 0)return;
-  if (yt < 0)return;
+  if (xt < -7) return;
+  if (yt < -7) return;
 
   int shift = 8 * xt + yt;
-  background->redLEDs |= red << shift;
-  background->greenLEDs |= green << shift;
+
+  if (shift > 0) {
+    background->redLEDs |= red << shift;
+    background->greenLEDs |= green << shift;
+  } else {
+    background->redLEDs |= red >> -shift;
+    background->greenLEDs |= green >> -shift;
+  }
 }
 
 void clearDisplay() {
