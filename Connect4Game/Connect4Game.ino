@@ -100,6 +100,39 @@ void digitalClockLoop() {
   digitalClockDisplay();
 }
 
+#define CONNECT4_ANIM_SPEED 150
+
+void animateConnect4(unsigned long timeMs) {
+  int frame = timeMs / CONNECT4_ANIM_SPEED;
+
+  clearDisplay();
+
+  int tx = -frame + 8;
+  setTranslate(tx, 0);
+
+  //C red: (w4)
+  drawBmp(168890638LL, 0LL, 0, 1);
+
+  //O green: (w4)
+  drawBmp(0LL, 235999502LL, 5, 1);
+
+  //N red/green: (w4)
+  drawBmp(520619551LL, 0LL, 10, 1);
+  drawBmp(0LL, 520619551LL, 15, 1);
+
+  //E red: (w3 / 5)
+  drawBmp(1381663LL, 0LL, 20, 1);
+
+  //C green: (w4)
+  drawBmp(0LL, 168890638LL, 24, 1);
+
+  //T red: (3 / 5)
+  drawBmp(73473LL, 0LL, 29, 1);
+
+  //4 green/orange flashing: (4/6)
+  drawBmp(WINFLASH(timeMs) ? 272109854LL : 0LL, 272109854LL, max(33, 2 - tx), 0);
+}
+
 void loop() {
 #ifdef RUN_TESTS
   tests();
@@ -107,8 +140,8 @@ void loop() {
 
   unsigned long timeMs = millis();
 
-  if (timeMs < 2000) {
-    drawFrame(70644701139214LL, 584422652085534720LL);
+  if (timeMs < (33 + 8 + 8) * CONNECT4_ANIM_SPEED + 500) {
+    animateConnect4(timeMs);
   }
   else {
     clearDisplay();

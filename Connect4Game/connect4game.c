@@ -91,7 +91,7 @@ void Connect4Game_loop(Connect4Game *thiz, unsigned long timeMs, ButtonStates *s
 
   if (!thiz->animations) {
     if (thiz->winnerColour) {
-      if (timeMs % 600 > 400) {
+      if (WINFLASH(timeMs)) {
         draw(thiz->winBoard, ORANGE);
       }
       int i = (timeMs / 100) % 7;
