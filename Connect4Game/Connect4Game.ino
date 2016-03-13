@@ -114,23 +114,23 @@ void animateConnect4(unsigned long timeMs) {
   drawBmp(1118478LL, 0LL, 0, 1);
 
   //O green: (w4)
-  drawBmp(0LL, 235999502LL, 3, 1);
+  drawBmp(0LL, 235999502LL, 4, 1);
 
   //N red/green: (w4)
-  drawBmp(520881695LL, 0LL, 7, 1);
-  drawBmp(0LL, 520881695LL, 11, 1);
+  drawBmp(520881695LL, 0LL, 9, 1);
+  drawBmp(0LL, 520881695LL, 14, 1);
 
   //E red: (w3 / 5)
-  drawBmp(1381663LL, 0LL, 15, 1);
+  drawBmp(1381663LL, 0LL, 19, 1);
 
   //C green: (w3)
-  drawBmp(0LL, 1118478LL, 18, 1);
+  drawBmp(0LL, 1118478LL, 23, 1);
 
   //T red: (3 / 5)
-  drawBmp(73473LL, 0LL, 21, 1);
+  drawBmp(73473LL, 0LL, 27, 1);
 
   //4 green/orange flashing: (4/6)
-  drawBmp(WINFLASH(timeMs) ? 272109854LL : 0LL, 272109854LL, max(24, 2 - tx), 0);
+  drawBmp(WINFLASH(timeMs) ? 272109854LL : 0LL, 272109854LL, max(31, 2 - tx), 0);
 }
 
 void loop() {
@@ -140,7 +140,7 @@ void loop() {
 
   unsigned long timeMs = millis();
 
-  if (timeMs < (33 + 8 + 8) * CONNECT4_ANIM_SPEED + 500) {
+  if (timeMs < (31 + 8 + 8) * CONNECT4_ANIM_SPEED + 500) {
     animateConnect4(timeMs);
   }
   else {
