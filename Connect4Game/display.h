@@ -18,3 +18,5 @@ void drawDelay(int milliseconds);
 void displayPixel(byte x, byte y, byte colour);
 void displayOrPixel(byte x, byte y, byte colour);
 
+void drawFrame(uint64_t red, uint64_t green);
+

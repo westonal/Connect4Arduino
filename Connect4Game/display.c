@@ -76,10 +76,14 @@ void drawDisplay() {
   drawColumn = (drawColumn + 1) % 8;
 }
 
-void clearDisplay(byte colour) {
+void drawFrame(uint64_t red, uint64_t green) {
   Buffer *background = &buffers[1 - foregroundBuffer];
-  background->greenLEDs = 0;
-  background->redLEDs = 0;
+  background->redLEDs = red;
+  background->greenLEDs = green;
+}
+
+void clearDisplay(byte colour) {
+  drawFrame(0, 0);
 }
 
 void drawDelay(int milliseconds) {
