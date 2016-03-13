@@ -2,6 +2,7 @@
 #include "connect4game.h"
 #include "display.h"
 #include "debug.h"
+#include "defines.h"
 
 Connect4Game *CreateConnect4Game() {
   Connect4Game *n = calloc(1, sizeof(Connect4Game));
@@ -213,14 +214,11 @@ int aiScoreMove(Board *playersBoard, Board *opponentsBoard, Board *both, int thi
 
 #define MINSCORE (1<<((sizeof(int)*8)-1)) //-2^15
 
-#define LOOK_AHEAD (4)
-
 long aiGetBestMoveAndScore(Board *playersBoard, Board *opponentsBoard, Board *both, int movesToLookAhead) {
   int moves[CONNECT4_WIDTH];
 
   for (int x = 0; x < CONNECT4_WIDTH; x++) {
-    if (movesToLookAhead == LOOK_AHEAD) {
-      p("%d: %d", x, moves[x]);
+    if (movesToLookAhead == AI_LOOK_AHEAD) {
       display[x][0] = ORANGE;
     }
 
@@ -230,7 +228,7 @@ long aiGetBestMoveAndScore(Board *playersBoard, Board *opponentsBoard, Board *bo
     else
       moves[x] = aiScoreMove(playersBoard, opponentsBoard, both, x, movesToLookAhead);
 
-    if (movesToLookAhead == LOOK_AHEAD)
+    if (AI_OUTPUT && (movesToLookAhead == AI_LOOK_AHEAD))
       p("%d: %d", x, moves[x]);
   }
 
@@ -245,15 +243,18 @@ long aiGetBestMoveAndScore(Board *playersBoard, Board *opponentsBoard, Board *bo
 }
 
 int aiChooseMove(Connect4Game * thiz) {
-  p("AI thinking, depth %d", LOOK_AHEAD);
+  if (AI_OUTPUT)
+    p("AI thinking, depth %d", AI_LOOK_AHEAD);
   int startMs = millis();
-  long moveAndScore = aiGetBestMoveAndScore(getCurrentPlayersBoard(thiz), getOtherPlayersBoard(thiz), thiz->both, LOOK_AHEAD);
+  long moveAndScore = aiGetBestMoveAndScore(getCurrentPlayersBoard(thiz), getOtherPlayersBoard(thiz), thiz->both, AI_LOOK_AHEAD);
   int m = moveAndScore & 0xFF;
   int score = moveAndScore >> 16;
   int endMs = millis();
-  p("AI took %d ms, move %d", endMs - startMs, m);
-  if (score < 0)
-    p("AI thinks it has lost");
+  if (AI_OUTPUT) {
+    p("AI took %d ms, move %d", endMs - startMs, m);
+    if (score < 0)
+      p("AI thinks it has lost");
+  }
   return m;
 }
 

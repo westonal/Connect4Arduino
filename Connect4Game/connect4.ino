@@ -1,3 +1,5 @@
+#ifdef RUN_TESTS
+
 #include "board.h"
 
 #include <ArduinoUnit.h>
@@ -262,4 +264,6 @@ test(does_not_wrap_around_diagonally_2)
               MOVE(7, 1),
               MOVE(0, 0));
 }
+
+#endif
 

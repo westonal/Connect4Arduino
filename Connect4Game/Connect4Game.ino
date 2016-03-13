@@ -8,6 +8,7 @@ extern "C" {
 #include "clock.h"
 #include "debug.h"
 #include "winchecker.h"
+#include "defines.h"
 }
 
 int inputs[] = {input_left, input_centre, input_right};
@@ -34,6 +35,8 @@ void setup() {
 
   states->repeat1TimeMs = 750;
   states->repeatNTimeMs = 200;
+
+  clearDisplay(OFF);
 }
 
 int moveLocation;
@@ -74,8 +77,6 @@ void digitalClockDisplay() {
 }
 
 void digitalClockLoop() {
-  clearDisplay(OFF);
-
   int mode = readButtons(states, millis());
 
   if (mode & DOWN_LEFT) {
@@ -103,8 +104,9 @@ void digitalClockLoop() {
 }
 
 void loop() {
+#ifdef RUN_TESTS
   tests();
-  clearDisplay(OFF);
+#endif
 
   //digitalClockLoop();
 
