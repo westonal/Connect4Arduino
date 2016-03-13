@@ -117,8 +117,8 @@ void animateConnect4(unsigned long timeMs) {
   drawBmp(0LL, 235999502LL, 5, 1);
 
   //N red/green: (w4)
-  drawBmp(520619551LL, 0LL, 10, 1);
-  drawBmp(0LL, 520619551LL, 15, 1);
+  drawBmp(520881695LL, 0LL, 10, 1);
+  drawBmp(0LL, 520881695LL, 15, 1);
 
   //E red: (w3 / 5)
   drawBmp(1381663LL, 0LL, 20, 1);
