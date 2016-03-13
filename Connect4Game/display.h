@@ -12,7 +12,7 @@ void drawDisplay();
 
 void stopDisplay();
 
-void clearDisplay(byte colour);
+void clearDisplay();
 void drawDelay(int milliseconds);
 
 void displayPixel(byte x, byte y, byte colour);

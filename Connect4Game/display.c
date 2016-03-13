@@ -82,7 +82,7 @@ void drawFrame(uint64_t red, uint64_t green) {
   background->greenLEDs = green;
 }
 
-void clearDisplay(byte colour) {
+void clearDisplay() {
   drawFrame(0, 0);
 }
 

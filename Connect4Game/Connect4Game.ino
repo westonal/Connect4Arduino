@@ -36,7 +36,7 @@ void setup() {
   states->repeat1TimeMs = 750;
   states->repeatNTimeMs = 200;
 
-  clearDisplay(OFF);
+  clearDisplay();
 }
 
 int moveLocation;
@@ -104,11 +104,16 @@ void loop() {
 #ifdef RUN_TESTS
   tests();
 #endif
-  clearDisplay(OFF);
 
-  //digitalClockLoop();
+  unsigned long timeMs = millis();
 
-  Connect4Game_loop(theGame, millis(), states);
+  if (timeMs < 2000) {
+    drawFrame(70644701139214LL, 584422652085534720LL);
+  }
+  else {
+    clearDisplay();
+    Connect4Game_loop(theGame, timeMs, states);
+  }
 
   //call often
   drawDisplay();
