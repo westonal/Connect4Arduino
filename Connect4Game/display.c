@@ -1,11 +1,10 @@
-#include "Arduino.h"
 #include "display.h"
 
 int drawColumn;
 
-int display[8][8];
-int greenColumns[8];
-int redColumns[8];
+byte display[8][8];
+byte greenColumns[8];
+byte redColumns[8];
 
 unsigned long nextDisplayDrawAllowed;
 
@@ -13,18 +12,18 @@ unsigned long nextDisplayDrawAllowed;
 #define MICROS (1000000LL / (FPS*8))
 
 void paintDisplayBuffer() {
-  for (int x = 0; x < 8; x++) {
-    int *green = &greenColumns[x];
-    int *red = &redColumns[x];
+  for (byte x = 0; x < 8; x++) {
+    byte *green = &greenColumns[x];
+    byte *red = &redColumns[x];
     *green = 0;
     *red = 0;
-    for (int y = 0; y < 8; y++) {
-      int cell = display[x][y];
+    for (byte y = 0; y < 8; y++) {
+      byte cell = display[x][y];
       if (cell & GREEN) {
-        *green += 1 << y;
+        *green |= 1 << y;
       }
       if (cell & RED) {
-        *red += 1 << y;
+        *red |= 1 << y;
       }
     }
   }
@@ -58,14 +57,14 @@ void drawDisplay() {
   drawColumn = (drawColumn + 1) % 8;
 }
 
-void clearDisplay(int colour) {
-  for (int y = 0; y < 8; y++)
-    for (int x = 0; x < 8; x++)
+void clearDisplay(byte colour) {
+  for (byte y = 0; y < 8; y++)
+    for (byte x = 0; x < 8; x++)
       display[x][y] = colour;
 }
 
 void drawDelay(int milliseconds) {
-  long end = millis() + milliseconds;
+  unsigned long end = millis() + milliseconds;
   while (millis() < end) {
     drawDisplay();
   }
